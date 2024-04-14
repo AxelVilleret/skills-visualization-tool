@@ -1,0 +1,72 @@
+.sidenav {
+    width: 250px;
+    transition: width 0.3s ease-in-out;
+    background-color: rgb(10,25,41);
+    padding-top: 28px;
+}
+.sidenavClosed {
+    composes: sidenav;
+    transition: width 0.3s ease-in-out;
+    width: 60px
+}
+.sideitem {
+    display: flex;
+    align-items: center;
+    padding: 10px 20px;
+    cursor: pointer;
+    color: #B2BAC2;
+    text-decoration: none;
+    overflow: hidden;
+}
+.linkText {
+    padding-left: 16px;
+}
+
+.sideitem:hover {
+    background-color: #244f7d1c;
+
+}
+.menuBtn {
+    align-self: center;
+    align-self: flex-start;  
+    justify-self: flex-end;
+    color: #B2BAC2;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    padding-left: 20px;
+}
+
+.sectionTitle{
+    margin: 10px;
+    align-self: center;
+    align-self: flex-start;  
+    justify-self: flex-end;
+    color: #B2BAC2;
+    font-weight: 700;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    padding-left: 20px;
+    margin-top: 50px;
+
+}
+
+.logo {
+    max-width: 50px;
+    max-height: 50px;
+
+}
+
+
+.logoTitle{
+    color: #B2BAC2;
+    font-weight: 700;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    padding-left: 20px;
+    margin-bottom: 50px;
+    margin: 10px ;
+    font-size: small;
+}

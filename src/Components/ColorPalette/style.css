@@ -1,0 +1,11 @@
+.color-palette {
+	cursor: pointer;
+	padding: 15px;
+	border-radius: 10px;
+	box-shadow: 0 3px 7px rgb(0, 0, 0, 0.2);
+	width: fit-content;
+}
+
+.card-shadow {
+	box-shadow: 0 3px 7px rgb(0, 0, 0, 0.2);
+}
