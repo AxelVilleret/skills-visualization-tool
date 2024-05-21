@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Container, Row, Col, Tabs, Tab, Form } from "react-bootstrap";
-import SunburstChart from "../Components/SunBurstGraph/SunBurst.jsx";
+import SunburstChart from "../Components/SunBurstGraph/Sunburst.jsx";
 import PartitionDiagram from "../Components/PartitionGraph/Partition.jsx";
 import SkillTree from "../Components/SkillsTree/SkillTree.js";
 import { MultiLineGraphCard } from "../Components/multiSeriesLineChart/MultiLineGraphCard";
