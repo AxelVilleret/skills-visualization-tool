@@ -1,30 +1,25 @@
 import React, { useEffect, useState } from "react";
 import { Container, Row, Col, Tabs, Tab, Form } from "react-bootstrap";
-import SunburstChart from "../Components/SunBurstGraph/Sunburst.jsx";
-import PartitionDiagram from "../Components/PartitionGraph/Partition.jsx";
-import SkillTree from "../Components/SkillsTree/SkillTree.js";
-import { MultiLineGraphCard } from "../Components/multiSeriesLineChart/MultiLineGraphCard";
-import CirclePacking from "../Components/CirclePackingGraph/CirclePacking.jsx";
-import DashboardLayout from "./Layout.js";
-import { fetchTabs, sortTabs } from "../Services/TabsFetchingService.js";
-import { convertFormatAtoB } from "../Services/AdapterMultiCompetencesService.js";
-import Legend from "../Components/LegendComponent.jsx";
+import SunburstChart from "../../Components/Sunburst/Sunburst.jsx";
+import PartitionDiagram from "../../Components/Partition/Partition.jsx";
+import SkillTree from "../../Components/SkillsTree/SkillsTree.jsx";
+import { MultiLineGraphCard } from "../../Components/MultiLines/MultiLinesCard.jsx";
+import CirclePacking from "../../Components/CirclePacking/CirclePacking.jsx";
+import { fetchTabs, sortTabs } from "../../Services/TabsFetchingService.js";
+import { convertFormatAtoB } from "../../Services/AdapterMultiCompetencesService.js";
+import Legend from "../../Components/Legend/Legend.jsx";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
-import Typography from "@mui/material/Typography";
 
-import "./styles/style-dashboard2.css";
-import Breadcrumbs from "../Components/Breadcrumbs/Breadcrumbs.jsx";
-import BreadcrumbsComponent from "../Components/Breadcrumbs/Breadcrumbs.jsx";
+import "./style.css";
+import Breadcrumbs from "../../Components/Breadcrumbs/Breadcrumbs.jsx";
 import {
 	AccessTimeOutlined,
-	AnalyticsOutlined,
-	CalendarMonthOutlined,
 	LibraryBooksOutlined,
 } from "@mui/icons-material";
-import PopoverComponent from "../Components/Popover/PopoverComponent.jsx";
+import PopoverComponent from "../../Components/Popover/PopoverComponent.jsx";
 
 export default function Dashboard2({ data }) {
 	const today = new Date().toISOString("fr-FR");
@@ -173,7 +168,7 @@ export default function Dashboard2({ data }) {
 							Graphes
 						</p>
 						<div>
-							<BreadcrumbsComponent
+							<Breadcrumbs
 								breadcrumbs={[
 									{
 										icon: <AccessTimeOutlined fontSize="small" />,
@@ -253,52 +248,8 @@ export default function Dashboard2({ data }) {
 			</div>
 			<Form>
 				<Form.Group controlId="selectSkill" className="formSelect">
-					{/* <Row>
-						<Col>
-							<Form.Label>Select Skill</Form.Label>
-						</Col>
-					</Row> */}
-					{/* <Row>
-						<Col>
-							<Form.Control
-								as="select"
-								value={metric}
-								onChange={handleMetricChange}
-							>
-								<option key={"mastery"} value={"mastery"}>
-									mastery
-								</option>
-								<option key={"trust"} value={"trust"}>
-									trust
-								</option>
-								<option key={"cover"} value={"cover"}>
-									cover
-								</option>
-							</Form.Control>
-						</Col>
-					</Row> */}
 				</Form.Group>
 			</Form>
-			{/* <h1>
-				{date} - Ensemble de compétences "{selectedNode}"
-			</h1> */}
-
-			{/* <Row>
-				<Col md={12}>
-					<div
-						style={{
-							border: "1px solid #ddd",
-							padding: "10px",
-						}}
-					>
-						<SkillTree
-							selectedNode={selectedNode}
-							setSelectedNode={setSelectedNode}
-							setHoveredNode={setHoveredNode}
-						/>
-					</div>
-				</Col>
-			</Row> */}
 		</Container>
 	);
 }

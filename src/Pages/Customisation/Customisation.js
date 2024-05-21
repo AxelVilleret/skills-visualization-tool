@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import DraggableRowsTable from "../Components/DraggableRowsTable/DraggableRowsTable";
-import ColorPalette from "../Components/ColorPalette/ColorPalette";
-import Badge from "../Components/Badge/Badge";
+import DraggableRowsTable from "../../Components/DraggableRowsTable/DraggableRowsTable";
+import ColorPalette from "../../Components/ColorPalette/ColorPalette";
+import Badge from "../../Components/Badge/Badge";
 import CheckIcon from "@mui/icons-material/Check";
 import { Container, Row, Col, Tabs, Tab, Form } from "react-bootstrap";
 
@@ -53,7 +53,7 @@ export default function Page_parameters() {
 				>
 					<div className="mt-5">
 						<p style={{ fontWeight: 700, fontSize: "1.3rem" }}>
-							Ordre des oglets pour les visualisations multicompetence
+							Ordre des oglets des visualisations du dashboard
 						</p>
 						<p style={{ color: "#888", marginBottom: "3rem" }}>
 							Organisez l'ordre des onglets selon vos préférences avec un simple

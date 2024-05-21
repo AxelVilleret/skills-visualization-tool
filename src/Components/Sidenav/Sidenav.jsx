@@ -4,9 +4,24 @@ import { NavLink } from "react-router-dom";
 import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
 import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrowLeft";
 import PersonIcon from "@mui/icons-material/Person";
-import { navData } from "../../Lib/navData";
 import { useState } from "react";
-import AppLogo from "../../Logo.png";
+import BarChartIcon from "@mui/icons-material/BarChart";
+import SettingsIcon from "@mui/icons-material/Settings";
+
+const navData = [
+	{
+		id: 1,
+		icon: <BarChartIcon />,
+		text: "Dashboard",
+		link: "/",
+	},
+	{
+		id: 2,
+		icon: <SettingsIcon />,
+		text: "Personnaliser",
+		link: "/perso",
+	},
+];
 
 export default function Sidenav() {
 	const [open, setopen] = useState(true);
@@ -25,19 +40,9 @@ export default function Sidenav() {
 				)}
 			</button>
 
-			{/* Logo */}
-			<div className={styles.logoContainer}>
-				<img src={AppLogo} alt="Logo" className={styles.logo} />
-				{open && (
-					<span className={styles.logoTitle}>
-						TeaTime - projet 5A
-					</span>
-				)}
-			</div>
-
 			{/* Accès rapide section */}
 			{open && <div className={styles.sectionTitle}>Visualisation</div>}
-			{navData.slice(0, 2).map((item) => (
+			{navData.slice(0, 1).map((item) => (
 				<NavLink
 					key={item.id}
 					className={styles.sideitem}

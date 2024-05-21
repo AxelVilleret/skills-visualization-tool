@@ -2,7 +2,7 @@ import React from "react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
 
-import "./styles.css";
+import "./style.css";
 
 const DraggableRowsTable = ({ name, elements, setElements }) => {
   const handleDragEnd = (result) => {

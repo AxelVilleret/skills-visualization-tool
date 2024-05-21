@@ -10,9 +10,9 @@ import {
 	SvgIcon,
 } from "@mui/material";
 // import { alpha, useTheme } from '@mui/material/styles';
-import MultiLineGraph from "./MultiLineGraph";
+import MultiLines from "./MultiLines";
 
-import "./styles.css";
+import "./style.css";
 
 export const MultiLineGraphCard = ({
 	setSelectedDate,
@@ -25,7 +25,7 @@ export const MultiLineGraphCard = ({
 	return (
 		<Card sx={sx} className="card-shadow">
 			<CardContent>
-				<MultiLineGraph
+				<MultiLines
 					setSelectedDate={setSelectedDate}
 					selectedSkil={selectedSkil}
 					setSelectedSkil={setSelectedSkil}

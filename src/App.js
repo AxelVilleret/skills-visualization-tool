@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Routes, Route } from "react-router-dom";
 import "./App.css";
-import Sidenav from "./Components/NavBar/Sidenav";
-import Dashboard1 from "./Pages/Dashboard1";
-import Dashboard2 from "./Pages/Dashboard2";
-import PageParameters from "./Pages/PageParameters";
+import Sidenav from "./Components/Sidenav/Sidenav";
+import Dashboard from "./Pages/Dashboard/Dashboard";
+import Customisation from "./Pages/Customisation/Customisation";
 import { fetchData } from "./Services/FetchDataService";
 
 function App() {
@@ -33,14 +32,13 @@ function App() {
 			{!data && !error && <div>Loading...</div>}
 			{error && <div>Error: {error.message}</div>}
 			{data && <>
-			<Sidenav />
-			<main className="w-100 flex-grow">
-				<Routes>
-					<Route path="/" element={<Dashboard2 data={data} />} />
-					<Route path="/dashboard2" element={<Dashboard1 data={data} />} />
-					<Route path="/personnaliser" element={<PageParameters />} />
-				</Routes>
-			</main>
+				<Sidenav />
+				<main className="w-100 flex-grow">
+					<Routes>
+						<Route path="/" element={<Dashboard data={data} />} />
+						<Route path="/perso" element={<Customisation />} />
+					</Routes>
+				</main>
 			</>}
 		</div>
 	);
