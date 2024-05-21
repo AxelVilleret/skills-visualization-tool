@@ -1,25 +1,22 @@
 import React, { useEffect, useState } from "react";
-import { Container, Row, Col, Tabs, Tab, Form } from "react-bootstrap";
+import { Container, Tabs, Tab, } from "react-bootstrap";
 import SunburstChart from "../../Components/Sunburst/Sunburst.jsx";
 import PartitionDiagram from "../../Components/Partition/Partition.jsx";
 import SkillTree from "../../Components/SkillsTree/SkillsTree.jsx";
-import { MultiLineGraphCard } from "../../Components/MultiLines/MultiLinesCard.jsx";
+import MultiLines from "../../Components/MultiLines/MultiLines.jsx";
 import CirclePacking from "../../Components/CirclePacking/CirclePacking.jsx";
 import { fetchTabs, sortTabs } from "../../Services/TabsFetchingService.js";
 import { convertFormatAtoB } from "../../Services/AdapterMultiCompetencesService.js";
 import Legend from "../../Components/Legend/Legend.jsx";
-import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
-import Select, { SelectChangeEvent } from "@mui/material/Select";
-
-import "./style.css";
+import Select from "@mui/material/Select";
 import Breadcrumbs from "../../Components/Breadcrumbs/Breadcrumbs.jsx";
 import {
 	AccessTimeOutlined,
 	LibraryBooksOutlined,
 } from "@mui/icons-material";
-import PopoverComponent from "../../Components/Popover/PopoverComponent.jsx";
+import PopoverComponent from "../../Components/CustomPopover/Popover.jsx";
 
 export default function Dashboard2({ data }) {
 	const today = new Date().toISOString("fr-FR");
@@ -109,65 +106,23 @@ export default function Dashboard2({ data }) {
 
 	return (
 		<Container>
-			<p className="header">Bienvenue, étudiant ANON !</p>
-			<p className="description">
-				Ici, vous pouvez visualiser vos compétences et leur évolution dans le temps.
-			</p>
-			<div className="dashboard-wrapper">
-				<div
-					style={{
-						height: "100%",
-					}}
-				>
-					<div
-						style={{
-							padding: "10px",
-							width: "100%",
-						}}
-					>
-						<MultiLineGraphCard
-							setSelectedDate={setDate}
-							selectedSkil={selectedNode}
-							setSelectedSkil={setSelectedNode}
-						/>
-					</div>
+			<h1>Dashboard</h1>
+			<p>Ici, vous pouvez visualiser vos compétences et leur évolution dans le temps.</p>
+			<div className="d-flex flex-column">
+				<div className="shadow-sm border p-4">
+					<h2>Evolution temporelle</h2>
+					<MultiLines setSelectedDate={setDate} selectedSkil={selectedNode} setSelectedSkil={setSelectedNode} />
 				</div>
-				<div
-					className="d-flex justify-content-between mt-5"
-					style={{ gap: "20px" }}
-				>
-					<div
-						style={{
-							padding: "20px",
-							width: "50%",
-						}}
-						className="card-shadow"
-					>
-						<p style={{ fontWeight: 700, fontSize: "1.5rem" }}>Hiérarchie</p>
-						<p
-							style={{
-								color: "rgb(136,136,136)",
-							}}
-						>
-							Vous pouvez sélectionner une compétence dans la hiérarchie ci-dessous.
-						</p>
-						<SkillTree
-							selectedNode={selectedNode}
-							setSelectedNode={setSelectedNode}
-							setHoveredNode={setHoveredNode}
-						/>
+				
+				<div className="d-flex justify-content-between mt-3 gap-3">
+					<div className="shadow-sm border p-4 w-50">
+						<h2>Hiérarchie</h2>
+							<p>Vous pouvez sélectionner une compétence dans la hiérarchie ci-dessous.</p>
+						<SkillTree selectedNode={selectedNode} setSelectedNode={setSelectedNode} setHoveredNode={setHoveredNode}/>
 					</div>
-					<div
-						style={{
-							padding: "20px",
-							width: "50%",
-						}}
-						className="card-shadow"
-					>
-						<p style={{ fontWeight: 700, fontSize: "1.5rem" }}>
-							Graphes
-						</p>
-						<div>
+					<div className="shadow-sm border p-4 w-50">
+						<h2>Graphes</h2>
+						<p>Choisissez votre type de graphe préféré pour visualiser vos compétences.</p>
 							<Breadcrumbs
 								breadcrumbs={[
 									{
@@ -180,41 +135,18 @@ export default function Dashboard2({ data }) {
 									},
 								]}
 							/>
-						</div>
-						<p
-							style={{
-								color: "rgb(136,136,136)",
-							}}
-						>
-							Chosisissez votre type de graphe préféré pour visualiser vos compétences.
-						</p>
-						<div
-							style={{
-								marginTop: "1rem",
-								marginBottom: "1rem",
-							}}
-						>
-							<FormControl fullWidth>
-								<InputLabel id="demo-simple-select-label"></InputLabel>
-								<Select
-									labelId="demo-simple-select-label"
-									id="demo-simple-select"
-									value={metric}
-									label=""
-									onChange={handleMetricChange}
-								>
-									<MenuItem value={"mastery"}>Maitrise</MenuItem>
-									<MenuItem value={"trust"}>Confiance</MenuItem>
-									<MenuItem value={"cover"}>Couverture</MenuItem>
-								</Select>
-							</FormControl>
-						</div>
+						<FormControl fullWidth>
+							<Select value={metric} onChange={handleMetricChange}>
+								<MenuItem value={"mastery"}>Maitrise</MenuItem>
+								<MenuItem value={"trust"}>Confiance</MenuItem>
+								<MenuItem value={"cover"}>Couverture</MenuItem>
+							</Select>
+						</FormControl>
 						{tabs.length > 0 && (
 							<>
 								<Tabs
 									activeKey={activeTab}
 									onSelect={handleTabChange}
-									className="mb-3"
 								>
 									{tabs.map((tab) => (
 										<Tab
@@ -226,7 +158,7 @@ export default function Dashboard2({ data }) {
 										</Tab>
 									))}
 								</Tabs>
-								<div className="w-100 d-flex justify-content-end ">
+								<div className="d-flex justify-content-end">
 									<PopoverComponent>
 										<Legend
 											colorScale={
@@ -246,10 +178,6 @@ export default function Dashboard2({ data }) {
 					</div>
 				</div>
 			</div>
-			<Form>
-				<Form.Group controlId="selectSkill" className="formSelect">
-				</Form.Group>
-			</Form>
 		</Container>
 	);
 }

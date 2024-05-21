@@ -5,6 +5,12 @@ import Badge from "../../Components/Badge/Badge";
 import CheckIcon from "@mui/icons-material/Check";
 import { Container, Row, Col, Tabs, Tab, Form } from "react-bootstrap";
 
+export const colorPalettes = [
+	["#26547c", "#ef476f", "#ffd166"],
+	["#002642", "#840032", "#e59500"],
+	["#f1dede", "#d496a7", "#5d576b"],
+];
+
 export default function Page_parameters() {
 	const [multiCompetenceTabs, setMultiCompetenceTabs] = useState([
 		"Sunburst Chart",
@@ -39,74 +45,33 @@ export default function Page_parameters() {
 	};
 
 	return (
-		<div className="container">
-			<p style={{ fontWeight: 700, fontSize: "2rem" }}>Personnalisation</p>
-			<p style={{ color: "#888", marginTop: "17px" }}>
-				Vous pouvez personnaliser votre page pour une expérience unique.
-			</p>
+		<Container>
+			<h1>Personnalisation</h1>
+			<p>Vous pouvez personnaliser votre page pour une expérience unique.</p>
+			<div className="shadow-sm border p-4">
+				<Tabs activeKey={activeTab} onSelect={handleTabChange}>
+					<Tab eventKey={"ongletsMulticompetence"} title={"Onglets multicompetence"} key={"ongletsMulticompetence"}>
+							<DraggableRowsTable name={"multicompetence-preference"} elements={multiCompetenceTabs}setElements={setMultiCompetenceTabs}/>
+					</Tab>
+					<Tab eventKey={"colorPalette"} title={"Couleurs"} key={"colorPalette"}>
+							<div className="d-flex flex-wrap" style={{ gap: "50px" }}>
+								{colorPalettes.map((palette, index) => (
+									<ColorPalette
+										colors={palette}
+										handleSelect={handlePaletteSelect}
+										selected={selected}
+									>
+										<Badge>
+											<CheckIcon style={{ color: "white" }} />
+										</Badge>
+									</ColorPalette>
+								))}
+							</div>
+					</Tab>
+				</Tabs>
+			</div>
 
-			<Tabs activeKey={activeTab} onSelect={handleTabChange} className="mt-5">
-				<Tab
-					eventKey={"ongletsMulticompetence"}
-					title={"Onglets multicompetence"}
-					key={"ongletsMulticompetence"}
-				>
-					<div className="mt-5">
-						<p style={{ fontWeight: 700, fontSize: "1.3rem" }}>
-							Ordre des oglets des visualisations du dashboard
-						</p>
-						<p style={{ color: "#888", marginBottom: "3rem" }}>
-							Organisez l'ordre des onglets selon vos préférences avec un simple
-							drag & drop.
-						</p>
-						<DraggableRowsTable
-							name={"multicompetence-preference"}
-							elements={multiCompetenceTabs}
-							setElements={setMultiCompetenceTabs}
-						/>
-					</div>
-				</Tab>
-				<Tab eventKey={"colorPalette"} title={"Couleurs"} key={"colorPalette"}>
-					<div className="mt-5">
-						<p style={{ fontWeight: 700, fontSize: "1.3rem" }}>
-							Palette de couleurs
-						</p>
-						<p style={{ color: "#888", marginBottom: "3rem" }}>
-							Personnalisez la palette de couleurs en selectionnant votre
-							palette préférée.
-						</p>
-						<div className="d-flex flex-wrap" style={{ gap: "50px" }}>
-							<ColorPalette
-								colors={["#26547c", "#ef476f", "#ffd166"]}
-								handleSelect={handlePaletteSelect}
-								selected={selected}
-							>
-								<Badge>
-									<CheckIcon style={{ color: "white" }} />
-								</Badge>
-							</ColorPalette>
-							<ColorPalette
-								colors={["#002642", "#840032", "#e59500"]}
-								handleSelect={handlePaletteSelect}
-								selected={selected}
-							>
-								<Badge>
-									<CheckIcon style={{ color: "white" }} />
-								</Badge>
-							</ColorPalette>
-							<ColorPalette
-								colors={["#f1dede", "#d496a7", "#5d576b"]}
-								handleSelect={handlePaletteSelect}
-								selected={selected}
-							>
-								<Badge>
-									<CheckIcon style={{ color: "white" }} />
-								</Badge>
-							</ColorPalette>
-						</div>
-					</div>
-				</Tab>
-			</Tabs>
-		</div>
+			
+		</Container>
 	);
 }
