@@ -4,40 +4,29 @@ import ColorPalette from "../../Components/ColorPalette/ColorPalette";
 import Badge from "../../Components/Badge/Badge";
 import CheckIcon from "@mui/icons-material/Check";
 import { Container, Row, Col, Tabs, Tab, Form } from "react-bootstrap";
-
-export const colorPalettes = [
-	["#26547c", "#ef476f", "#ffd166"],
-	["#002642", "#840032", "#e59500"],
-	["#f1dede", "#d496a7", "#5d576b"],
-];
+import { localStorageService } from "../../Services/LocalStorageService";
+import { LOCAL_STORAGE_KEYS, COLOR_PALETTES, DEFAULT_COLOR_PALETTE, DEFAULT_TAB_ORDER } from "../../constants";
 
 export default function Page_parameters() {
-	const [multiCompetenceTabs, setMultiCompetenceTabs] = useState([
-		"Sunburst Chart",
-		"Partition Diagram",
-		"Circle Packing",
-	]);
+	const [multiCompetenceTabs, setMultiCompetenceTabs] = useState(DEFAULT_TAB_ORDER);
 
-	const [selected, setSelected] = useState(["#26547c", "#ef476f", "#ffd166"]);
+	const [selectedPalette, setSelectedPalette] = useState(null);
 	const [activeTab, setActiveTab] = useState("ongletsMulticompetence");
-	const [monoCompetenceTabs, setMonoCompetenceTabs] = useState(["Line Graph"]);
 
 	useEffect(() => {
 		setMultiCompetenceTabs(
-			(old) =>
-				JSON.parse(localStorage.getItem("multicompetence-preference")) || old
+			localStorageService.getItem(LOCAL_STORAGE_KEYS.TAB_ORDER) || multiCompetenceTabs
 		);
 
-		setMonoCompetenceTabs(
-			(old) =>
-				JSON.parse(localStorage.getItem("monocompetence-preference")) || old
+		setSelectedPalette(
+			localStorageService.getItem(LOCAL_STORAGE_KEYS.COLOR_PALETTE) || DEFAULT_COLOR_PALETTE
 		);
 	}, []);
 
 	const handlePaletteSelect = (colors, setIsSelected) => {
 		setIsSelected(true);
-		localStorage.setItem("color-palette", JSON.stringify(colors));
-		setSelected((_) => colors);
+		localStorageService.setItem(LOCAL_STORAGE_KEYS.COLOR_PALETTE, colors);
+		setSelectedPalette(colors);
 	};
 
 	const handleTabChange = (tabKey) => {
@@ -50,17 +39,13 @@ export default function Page_parameters() {
 			<p>Vous pouvez personnaliser votre page pour une expérience unique.</p>
 			<div className="shadow-sm border p-4">
 				<Tabs activeKey={activeTab} onSelect={handleTabChange}>
-					<Tab eventKey={"ongletsMulticompetence"} title={"Onglets multicompetence"} key={"ongletsMulticompetence"}>
+					<Tab eventKey={"ongletsMulticompetence"} title={"Ordre des onglets"}>
 							<DraggableRowsTable name={"multicompetence-preference"} elements={multiCompetenceTabs}setElements={setMultiCompetenceTabs}/>
 					</Tab>
-					<Tab eventKey={"colorPalette"} title={"Couleurs"} key={"colorPalette"}>
-							<div className="d-flex flex-wrap" style={{ gap: "50px" }}>
-								{colorPalettes.map((palette, index) => (
-									<ColorPalette
-										colors={palette}
-										handleSelect={handlePaletteSelect}
-										selected={selected}
-									>
+					<Tab eventKey={"colorPalette"} title={"Palette de couleurs"}>
+							<div className="d-flex">
+								{COLOR_PALETTES.map((palette) => (
+									<ColorPalette colors={palette} handleSelect={handlePaletteSelect} selectedPalette={selectedPalette}>
 										<Badge>
 											<CheckIcon style={{ color: "white" }} />
 										</Badge>

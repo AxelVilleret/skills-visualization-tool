@@ -1,6 +1,7 @@
+import { localStorageService } from "./LocalStorageService";
+
 const fetchTabs = (key) => {
-	const tabs = JSON.parse(localStorage.getItem(key));
-	return tabs || null;
+	return localStorageService.getItem(key);
 };
 
 const sortTabs = (savedTabsArray, tabs) => {

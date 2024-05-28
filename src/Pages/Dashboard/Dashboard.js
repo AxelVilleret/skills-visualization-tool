@@ -17,8 +17,11 @@ import {
 	LibraryBooksOutlined,
 } from "@mui/icons-material";
 import PopoverComponent from "../../Components/CustomPopover/Popover.jsx";
+import { colorPalettes } from "../Customisation/Customisation.js";
+import { LOCAL_STORAGE_KEYS, DEFAULT_COLOR_PALETTE, DEFAULT_TAB_ORDER } from "../../constants.js";
+import { localStorageService } from "../../Services/LocalStorageService.js";
 
-export default function Dashboard2({ data }) {
+export default function Dashboard({ data }) {
 	const today = new Date().toISOString("fr-FR");
 	const [dataSunburst, setDataSunburst] = useState({});
 	const [tabs, setTabs] = useState([]);
@@ -31,8 +34,6 @@ export default function Dashboard2({ data }) {
 	const convertData = () =>
 		setDataSunburst(convertFormatAtoB(data, date, selectedNode, metric));
 
-	const palette = ["#26547c", "#ef476f", "#ffd166"];
-
 	useEffect(() => {
 		convertData();
 	}, []);
@@ -40,7 +41,7 @@ export default function Dashboard2({ data }) {
 	useEffect(() => {
 		if (Object.keys(dataSunburst).length > 0) {
 			setTabs(
-				sortTabs(fetchTabs("multicompetence-preference"), [
+				sortTabs(fetchTabs(LOCAL_STORAGE_KEYS.TAB_ORDER), [
 					{
 						key: "sunburst",
 						title: "Sunburst Chart",
@@ -49,7 +50,7 @@ export default function Dashboard2({ data }) {
 							<SunburstChart
 								data={dataSunburst}
 								colorScale={
-									JSON.parse(localStorage.getItem("color-palette")) || palette
+									localStorageService.getItem(LOCAL_STORAGE_KEYS.COLOR_PALETTE) || DEFAULT_COLOR_PALETTE
 								}
 								setSelectedNode={setSelectedNode}
 								hoveredNode={hoveredNode}
@@ -64,7 +65,7 @@ export default function Dashboard2({ data }) {
 							<PartitionDiagram
 								data={dataSunburst}
 								colorScale={
-									JSON.parse(localStorage.getItem("color-palette")) || palette
+									localStorageService.getItem(LOCAL_STORAGE_KEYS.COLOR_PALETTE) || DEFAULT_COLOR_PALETTE
 								}
 								setSelectedNode={setSelectedNode}
 								hoveredNode={hoveredNode}
@@ -79,7 +80,7 @@ export default function Dashboard2({ data }) {
 							<CirclePacking
 								data={dataSunburst}
 								colorScale={
-									JSON.parse(localStorage.getItem("color-palette")) || palette
+									localStorageService.getItem(LOCAL_STORAGE_KEYS.COLOR_PALETTE) || DEFAULT_COLOR_PALETTE
 								}
 								setSelectedNode={setSelectedNode}
 								hoveredNode={hoveredNode}
@@ -162,8 +163,8 @@ export default function Dashboard2({ data }) {
 									<PopoverComponent>
 										<Legend
 											colorScale={
-												JSON.parse(localStorage.getItem("color-palette")) ||
-												palette
+												JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEYS.COLOR_PALETTE)) ||
+												DEFAULT_COLOR_PALETTE
 											}
 											titles={[
 												"Niveau inférieur à 40 %",

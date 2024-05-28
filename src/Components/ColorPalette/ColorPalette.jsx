@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import "./style.css";
-
-function ColorPalette({ colors, selected, handleSelect, children }) {
+function ColorPalette({ colors, selectedPalette, handleSelect, children }) {
 
     const [isSelected, setIsSelected] = useState(false);
 
@@ -13,14 +11,13 @@ function ColorPalette({ colors, selected, handleSelect, children }) {
 	});
 
     useEffect(() => {
-        const selectedColors = JSON.parse(localStorage.getItem("color-palette"))
-        setIsSelected(JSON.stringify(colors) === JSON.stringify(selectedColors))
-    }, [selected])
+        setIsSelected(JSON.stringify(colors) === JSON.stringify(selectedPalette))
+    }, [selectedPalette])
 
 	return (
-		<div className="position-relative" style={{ width: "fit-content" }}>
+		<div className="position-relative d-inline-block m-3" >
 			<div
-				className="d-flex color-palette"
+				className="d-flex d-inline-block p-3 rounded shadow-sm bg-white cursor-pointer"
 				onClick={() => {
 					handleSelect(colors, setIsSelected);
 				}}
