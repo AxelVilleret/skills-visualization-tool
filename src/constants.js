@@ -13,3 +13,4 @@ export const COLOR_PALETTES = [
 export const DEFAULT_COLOR_PALETTE = COLOR_PALETTES[0];
 
 export const DEFAULT_TAB_ORDER = ["Sunburst Chart", "Partition Diagram", "Circle Packing"];
+

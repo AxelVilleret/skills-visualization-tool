@@ -5,7 +5,7 @@ import PartitionDiagram from "../../Components/Partition/Partition.jsx";
 import SkillTree from "../../Components/SkillsTree/SkillsTree.jsx";
 import MultiLines from "../../Components/MultiLines/MultiLines.jsx";
 import CirclePacking from "../../Components/CirclePacking/CirclePacking.jsx";
-import { fetchTabs, sortTabs } from "../../Services/TabsFetchingService.js";
+import { sortTabs } from "../../Services/SortTabsService.js";
 import { convertFormatAtoB } from "../../Services/AdapterMultiCompetencesService.js";
 import Legend from "../../Components/Legend/Legend.jsx";
 import MenuItem from "@mui/material/MenuItem";
@@ -16,9 +16,8 @@ import {
 	AccessTimeOutlined,
 	LibraryBooksOutlined,
 } from "@mui/icons-material";
-import PopoverComponent from "../../Components/CustomPopover/Popover.jsx";
-import { colorPalettes } from "../Customisation/Customisation.js";
-import { LOCAL_STORAGE_KEYS, DEFAULT_COLOR_PALETTE, DEFAULT_TAB_ORDER } from "../../constants.js";
+import CustomPopover from "../../Components/CustomPopover/CustomPopover.jsx";
+import { LOCAL_STORAGE_KEYS, DEFAULT_COLOR_PALETTE } from "../../constants.js";
 import { localStorageService } from "../../Services/LocalStorageService.js";
 
 export default function Dashboard({ data }) {
@@ -41,7 +40,7 @@ export default function Dashboard({ data }) {
 	useEffect(() => {
 		if (Object.keys(dataSunburst).length > 0) {
 			setTabs(
-				sortTabs(fetchTabs(LOCAL_STORAGE_KEYS.TAB_ORDER), [
+				sortTabs([
 					{
 						key: "sunburst",
 						title: "Sunburst Chart",
@@ -160,7 +159,7 @@ export default function Dashboard({ data }) {
 									))}
 								</Tabs>
 								<div className="d-flex justify-content-end">
-									<PopoverComponent>
+									<CustomPopover>
 										<Legend
 											colorScale={
 												JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEYS.COLOR_PALETTE)) ||
@@ -172,7 +171,7 @@ export default function Dashboard({ data }) {
 												"Niveau supérieur à 80 %",
 											]}
 										/>
-									</PopoverComponent>
+									</CustomPopover>
 								</div>
 							</>
 						)}

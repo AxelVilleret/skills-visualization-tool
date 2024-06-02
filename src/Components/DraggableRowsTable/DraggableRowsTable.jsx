@@ -4,24 +4,17 @@ import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
 
 import "./style.css";
 
-const DraggableRowsTable = ({ name, elements, setElements }) => {
-  const handleDragEnd = (result) => {
-    if (!result.destination) return;
+const DraggableRowsTable = ({ tabsOrder, onTabsOrderChange }) => {
 
+  const handleDragEnd = (result) => {
+    console.log(result);
+    if (!result.destination) return;
     const sourceIndex = result.source.index;
     const destinationIndex = result.destination.index;
-
-    const newTabOrder = Array.from(elements);
-
-    // Remove the dragged tab from its original position and insert it into its new position
+    const newTabOrder = Array.from(tabsOrder);
     const [draggedTab] = newTabOrder.splice(sourceIndex, 1);
     newTabOrder.splice(destinationIndex, 0, draggedTab);
-
-    // Store in local storage
-    localStorage.setItem(name, JSON.stringify(newTabOrder));
-
-    // Update the state with the new tab order
-    setElements(newTabOrder);
+    onTabsOrderChange(newTabOrder);
   };
 
   return (
@@ -37,7 +30,7 @@ const DraggableRowsTable = ({ name, elements, setElements }) => {
           <Droppable droppableId="tabs">
             {(provided) => (
               <tbody ref={provided.innerRef} {...provided.droppableProps}>
-                {elements.map((tab, index) => (
+                {tabsOrder.map((tab, index) => (
                   <Draggable key={index} draggableId={`tab-${index}`} index={index}>
                     {(provided) => (
                       <tr
