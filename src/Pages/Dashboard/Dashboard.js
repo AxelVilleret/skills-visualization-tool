@@ -6,7 +6,7 @@ import SkillTree from "../../Components/SkillsTree/SkillsTree.jsx";
 import MultiLines from "../../Components/MultiLines/MultiLines.jsx";
 import CirclePacking from "../../Components/CirclePacking/CirclePacking.jsx";
 import { sortTabs } from "../../Services/SortTabsService.js";
-import { convertFormatAtoB } from "../../Services/AdapterMultiCompetencesService.js";
+import { adaptDataFormat } from "../../Services/AdapterService.js";
 import Legend from "../../Components/Legend/Legend.jsx";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
@@ -22,7 +22,7 @@ import { localStorageService } from "../../Services/LocalStorageService.js";
 
 export default function Dashboard({ data }) {
 	const today = new Date().toISOString("fr-FR");
-	const [dataSunburst, setDataSunburst] = useState({});
+	const [formattedData, setFormattedData] = useState({});
 	const [tabs, setTabs] = useState([]);
 	const [activeTab, setActiveTab] = useState("sunburst");
 	const [date, setDate] = useState(today);
@@ -31,14 +31,14 @@ export default function Dashboard({ data }) {
 	const [hoveredNode, setHoveredNode] = useState(null);
 
 	const convertData = () =>
-		setDataSunburst(convertFormatAtoB(data, date, selectedNode, metric));
+		setFormattedData(adaptDataFormat(data, date, selectedNode, metric));
 
 	useEffect(() => {
 		convertData();
 	}, []);
 
 	useEffect(() => {
-		if (Object.keys(dataSunburst).length > 0) {
+		if (Object.keys(formattedData).length > 0) {
 			setTabs(
 				sortTabs([
 					{
@@ -47,7 +47,7 @@ export default function Dashboard({ data }) {
 						eventKey: "sunburst",
 						content: (
 							<SunburstChart
-								data={dataSunburst}
+								data={formattedData}
 								colorScale={
 									localStorageService.getItem(LOCAL_STORAGE_KEYS.COLOR_PALETTE) || DEFAULT_COLOR_PALETTE
 								}
@@ -62,7 +62,7 @@ export default function Dashboard({ data }) {
 						eventKey: "partition",
 						content: (
 							<PartitionDiagram
-								data={dataSunburst}
+								data={formattedData}
 								colorScale={
 									localStorageService.getItem(LOCAL_STORAGE_KEYS.COLOR_PALETTE) || DEFAULT_COLOR_PALETTE
 								}
@@ -77,7 +77,7 @@ export default function Dashboard({ data }) {
 						eventKey: "circlePacking",
 						content: (
 							<CirclePacking
-								data={dataSunburst}
+								data={formattedData}
 								colorScale={
 									localStorageService.getItem(LOCAL_STORAGE_KEYS.COLOR_PALETTE) || DEFAULT_COLOR_PALETTE
 								}
@@ -89,7 +89,7 @@ export default function Dashboard({ data }) {
 				])
 			);
 		}
-	}, [dataSunburst]);
+	}, [formattedData]);
 
 	useEffect(() => {
 		convertData();

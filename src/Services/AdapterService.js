@@ -1,4 +1,4 @@
-function convertFormatAtoB(dataArray, inputDate, root, metric) {
+function adaptDataFormat(dataArray, inputDate, root, metric) {
     
     if (!dataArray) {
         return {};
@@ -69,4 +69,4 @@ function convertFormatAtoB(dataArray, inputDate, root, metric) {
     return buildTree(dataArray[0]);
 }
 
-export { convertFormatAtoB };
+export { adaptDataFormat };
