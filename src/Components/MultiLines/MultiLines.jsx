@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
 	Chart as ChartJS,
 	LineElement,
@@ -11,12 +11,11 @@ import {
 import { Line } from "react-chartjs-2";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { Container, Row, Col, Form, InputGroup, Button } from "react-bootstrap";
+import { Container, Row, Col, Form, } from "react-bootstrap";
 import zoomPlugin from "chartjs-plugin-zoom";
 import FormGroup from "@mui/material/FormGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Switch from "@mui/material/Switch";
-import { fetchData } from "../../Services/FetchDataService";
 
 ChartJS.register(
 	LineElement,
@@ -28,10 +27,15 @@ ChartJS.register(
 	zoomPlugin
 );
 
-function MultiLineGraph({ setSelectedDate, selectedSkil, setSelectedSkil }) {
-	const [data, setData] = useState([]);
+function convertToAmericanFormat(frenchDate) {
+	let parts = frenchDate.split("/");
+	let americanDate = `${parts[1]}/${parts[0]}/${parts[2]}`;
+	return americanDate;
+}
 
-	const [selectedSkill, setSelectedSkill] = useState(undefined);
+function MultiLineGraph({ data, onSelectDate, selectedSkill, onSelectSkill }) {
+	console.log(selectedSkill);
+
 	const [startDate, setStartDate] = useState(null);
 	const [endDate, setEndDate] = useState(null);
 	const [focusedInput, setFocusedInput] = useState(null);
@@ -66,41 +70,24 @@ function MultiLineGraph({ setSelectedDate, selectedSkil, setSelectedSkil }) {
 				const formattedData = formatDataForChart(
 					data.find((skill) => skill.name === selectedSkill)?.updates || []
 				);
-				if (setSelectedDate) setSelectedDate(formattedData.labels[index]);
+				onSelectDate(formattedData.labels[index]);
 			}
 		},
 	};
 
-	useEffect(() => {
-		const fetchDataAsync = async () => {
-			try {
-				const result = await fetchData();
-				setData(result);
-				if (result.length > 0) {
-					setSelectedSkill(result[0].name);
-					setSelectedSkil(result[0].name);
-				}
-
-			} catch (error) {
-				console.error("error", error);
-			}
-		};
-
-		fetchDataAsync();
-	}, []);
-
-	useEffect(() => {
-		if (selectedSkil) {
-			setSelectedSkill(selectedSkil);
-		}
-	}, [selectedSkil]);
-
 	const formatDataForChart = (dataUpdates) => {
 		const filteredData = dataUpdates.filter(
 			(update) =>
-				(!startDate || new Date(update.timestamp) >= startDate) &&
-				(!endDate || new Date(update.timestamp) <= endDate)
+			{
+				let americanDate = convertToAmericanFormat(update.timestamp);
+				let date = new Date(americanDate);
+				return (!startDate || date.getTime() >= new Date(startDate).getTime()) && (!endDate || date.getTime() <= new Date(endDate).getTime());
+				}
+				
 		);
+
+		
+		console.log(filteredData);
 
 		const formattedData = {
 			labels: filteredData.map((update) => update.timestamp),
@@ -157,8 +144,7 @@ function MultiLineGraph({ setSelectedDate, selectedSkil, setSelectedSkil }) {
 	};
 
 	const handleSkillChange = (event) => {
-		setSelectedSkill(event.target.value);
-		setSelectedSkil(event.target.value);
+		onSelectSkill(event.target.value);
 	};
 
 	const handleStartDateChange = (date) => {
@@ -173,12 +159,6 @@ function MultiLineGraph({ setSelectedDate, selectedSkil, setSelectedSkil }) {
 
 	const handleCheckboxChange = () => {
 		setShowCoverLine(!showCoverLine); // Toggle the state when the checkbox is clicked
-	};
-
-	const containerStyle = {
-		display: "flex",
-		alignItems: "flex-end",
-		justifyContent: "start",
 	};
 
 	return (

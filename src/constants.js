@@ -14,3 +14,17 @@ export const DEFAULT_COLOR_PALETTE = COLOR_PALETTES[0];
 
 export const DEFAULT_TAB_ORDER = ["Sunburst Chart", "Partition Diagram", "Circle Packing"];
 
+export const METRICS = [
+    {
+        key: "mastery",
+        label: "Mastery",
+    },
+    {
+        key: "trust",
+        label: "Trust",
+    },
+    {
+        key: "cover",
+        label: "Cover",
+    },
+];

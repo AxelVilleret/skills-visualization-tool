@@ -1,3 +1,5 @@
+import { METRICS } from "../constants";
+
 function adaptDataFormat(dataArray, inputDate, root, metric) {
     
     if (!dataArray) {
@@ -45,13 +47,13 @@ function adaptDataFormat(dataArray, inputDate, root, metric) {
             let closestDate = findClosestDate(data.updates);
             // If the data is a leaf, add the updates to the tree
             switch (metric) {
-                case "mastery":
+                case METRICS[0].key:
                     tree.value = data.updates[closestDate].mastery;
                     break;
-                case "trust":
+                case METRICS[1].key:
                     tree.value = data.updates[closestDate].trust;
                     break;
-                case "cover":
+                case METRICS[2].key:
                     tree.value = data.updates[closestDate].cover;
                     break;
                 default:

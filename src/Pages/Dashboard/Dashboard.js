@@ -1,11 +1,7 @@
 import React, { useMemo, useState, useCallback } from "react";
 import { Container, Tabs, Tab, } from "react-bootstrap";
-import SunburstChart from "../../Components/charts/Sunburst/Sunburst.jsx";
-import PartitionDiagram from "../../Components/charts/Partition/Partition.jsx";
 import SkillTree from "../../Components/SkillsTree/SkillsTree.jsx";
 import MultiLines from "../../Components/MultiLines/MultiLines.jsx";
-import CirclePacking from "../../Components/charts/CirclePacking/CirclePacking.jsx";
-import { sortTabs } from "../../Services/SortTabsService.js";
 import { adaptDataFormat } from "../../Services/AdapterService.js";
 import Legend from "../../Components/Legend/Legend.jsx";
 import MenuItem from "@mui/material/MenuItem";
@@ -17,73 +13,26 @@ import {
 	LibraryBooksOutlined,
 } from "@mui/icons-material";
 import CustomPopover from "../../Components/CustomPopover/CustomPopover.jsx";
-import { LOCAL_STORAGE_KEYS, DEFAULT_COLOR_PALETTE } from "../../constants.js";
+import { LOCAL_STORAGE_KEYS, DEFAULT_COLOR_PALETTE, DEFAULT_TAB_ORDER, METRICS } from "../../constants.js";
 import { localStorageService } from "../../Services/LocalStorageService.js";
+import Chart from "../../Components/charts/Chart.jsx";
 
-const CHART_TYPES = ["sunburst", "partition", "circlePacking"];
+const LEGEND = [
+	"Niveau inférieur à 40 %",
+	"Niveau situé entre 40 et 80 %",
+	"Niveau supérieur à 80 %",
+];
 
 export default function Dashboard({ data }) {
+	const CHART_TYPES = useMemo(() => localStorageService.getItem(LOCAL_STORAGE_KEYS.TAB_ORDER) || DEFAULT_TAB_ORDER, []);
 	const today = new Date().toISOString("fr-FR");
-	const [activeTab, setActiveTab] = useState("sunburst");
+	const [activeTab, setActiveTab] = useState(CHART_TYPES[0].key);
 	const [date, setDate] = useState(today);
-	const [selectedNode, setSelectedNode] = useState(null);
-	const [metric, setMetric] = useState("mastery");
+	const [selectedNode, setSelectedNode] = useState(data[0].name);
+	const [metric, setMetric] = useState(METRICS[0].key);
 	const [hoveredNode, setHoveredNode] = useState(null);
 
 	const formattedData = useMemo(() => adaptDataFormat(data, date, selectedNode, metric), [date, selectedNode, metric, hoveredNode]);
-
-	const tabs = useMemo(() => {
-		if (data.length > 0) {
-			return sortTabs([
-				{
-					key: "sunburst",
-					title: "Sunburst Chart",
-					eventKey: "sunburst",
-					content: (
-						<SunburstChart
-							data={formattedData}
-							colorScale={
-								localStorageService.getItem(LOCAL_STORAGE_KEYS.COLOR_PALETTE) || DEFAULT_COLOR_PALETTE
-							}
-							setSelectedNode={setSelectedNode}
-							hoveredNode={hoveredNode}
-						/>
-					),
-				},
-				{
-					key: "partition",
-					title: "Partition Diagram",
-					eventKey: "partition",
-					content: (
-						<PartitionDiagram
-							data={formattedData}
-							colorScale={
-								localStorageService.getItem(LOCAL_STORAGE_KEYS.COLOR_PALETTE) || DEFAULT_COLOR_PALETTE
-							}
-							setSelectedNode={setSelectedNode}
-							hoveredNode={hoveredNode}
-						/>
-					),
-				},
-				{
-					key: "circlePacking",
-					title: "Circle Packing",
-					eventKey: "circlePacking",
-					content: (
-						<CirclePacking
-							data={formattedData}
-							colorScale={
-								localStorageService.getItem(LOCAL_STORAGE_KEYS.COLOR_PALETTE) || DEFAULT_COLOR_PALETTE
-							}
-							setSelectedNode={setSelectedNode}
-							hoveredNode={hoveredNode}
-						/>
-					),
-				},
-			]);
-		}
-	}, [formattedData]);
-
 
 	const handleTabChange = useCallback((tabKey) => {
 		setActiveTab(tabKey);
@@ -100,7 +49,7 @@ export default function Dashboard({ data }) {
 			<div className="d-flex flex-column">
 				<div className="shadow-sm border p-4">
 					<h2>Evolution temporelle</h2>
-					<MultiLines setSelectedDate={setDate} selectedSkil={selectedNode} setSelectedSkil={setSelectedNode} />
+					<MultiLines data={data} onSelectDate={setDate} selectedSkill={selectedNode} onSelectSkill={setSelectedNode} />
 				</div>
 				
 				<div className="d-flex justify-content-between mt-3 gap-3">
@@ -126,24 +75,20 @@ export default function Dashboard({ data }) {
 							/>
 						<FormControl fullWidth>
 							<Select value={metric} onChange={handleMetricChange}>
-								<MenuItem value={"mastery"}>Maitrise</MenuItem>
-								<MenuItem value={"trust"}>Confiance</MenuItem>
-								<MenuItem value={"cover"}>Couverture</MenuItem>
+								{METRICS.map((metric) => (
+									<MenuItem key={metric.key} value={metric.key}>
+										{metric.label}
+									</MenuItem>
+								))}
 							</Select>
 						</FormControl>
-						{tabs.length > 0 && (
-							<>
 								<Tabs
 									activeKey={activeTab}
 									onSelect={handleTabChange}
 								>
-									{tabs.map((tab) => (
-										<Tab
-											eventKey={tab?.eventKey}
-											title={tab?.title}
-											key={tab?.key}
-										>
-											{tab?.content}
+									{CHART_TYPES.map((chart) => (
+										<Tab eventKey={chart} title={chart} key={chart}>
+											<Chart type={chart} data={formattedData} colorScale={localStorageService.getItem(LOCAL_STORAGE_KEYS.COLOR_PALETTE) || DEFAULT_COLOR_PALETTE} setSelectedNode={setSelectedNode} hoveredNode={hoveredNode} />
 										</Tab>
 									))}
 								</Tabs>
@@ -154,16 +99,10 @@ export default function Dashboard({ data }) {
 												JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEYS.COLOR_PALETTE)) ||
 												DEFAULT_COLOR_PALETTE
 											}
-											titles={[
-												"Niveau inférieur à 40 %",
-												"Niveau situé entre 40 et 80 %",
-												"Niveau supérieur à 80 %",
-											]}
+											titles={LEGEND}
 										/>
 									</CustomPopover>
 								</div>
-							</>
-						)}
 					</div>
 				</div>
 			</div>
