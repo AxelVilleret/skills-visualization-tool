@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useMemo, useState, useCallback } from "react";
 import { Container, Tabs, Tab, } from "react-bootstrap";
-import SunburstChart from "../../Components/Sunburst/Sunburst.jsx";
-import PartitionDiagram from "../../Components/Partition/Partition.jsx";
+import SunburstChart from "../../Components/charts/Sunburst/Sunburst.jsx";
+import PartitionDiagram from "../../Components/charts/Partition/Partition.jsx";
 import SkillTree from "../../Components/SkillsTree/SkillsTree.jsx";
 import MultiLines from "../../Components/MultiLines/MultiLines.jsx";
-import CirclePacking from "../../Components/CirclePacking/CirclePacking.jsx";
+import CirclePacking from "../../Components/charts/CirclePacking/CirclePacking.jsx";
 import { sortTabs } from "../../Services/SortTabsService.js";
 import { adaptDataFormat } from "../../Services/AdapterService.js";
 import Legend from "../../Components/Legend/Legend.jsx";
@@ -20,89 +20,78 @@ import CustomPopover from "../../Components/CustomPopover/CustomPopover.jsx";
 import { LOCAL_STORAGE_KEYS, DEFAULT_COLOR_PALETTE } from "../../constants.js";
 import { localStorageService } from "../../Services/LocalStorageService.js";
 
+const CHART_TYPES = ["sunburst", "partition", "circlePacking"];
+
 export default function Dashboard({ data }) {
 	const today = new Date().toISOString("fr-FR");
-	const [formattedData, setFormattedData] = useState({});
-	const [tabs, setTabs] = useState([]);
 	const [activeTab, setActiveTab] = useState("sunburst");
 	const [date, setDate] = useState(today);
 	const [selectedNode, setSelectedNode] = useState(null);
 	const [metric, setMetric] = useState("mastery");
 	const [hoveredNode, setHoveredNode] = useState(null);
 
-	const convertData = () =>
-		setFormattedData(adaptDataFormat(data, date, selectedNode, metric));
+	const formattedData = useMemo(() => adaptDataFormat(data, date, selectedNode, metric), [date, selectedNode, metric, hoveredNode]);
 
-	useEffect(() => {
-		convertData();
-	}, []);
-
-	useEffect(() => {
-		if (Object.keys(formattedData).length > 0) {
-			setTabs(
-				sortTabs([
-					{
-						key: "sunburst",
-						title: "Sunburst Chart",
-						eventKey: "sunburst",
-						content: (
-							<SunburstChart
-								data={formattedData}
-								colorScale={
-									localStorageService.getItem(LOCAL_STORAGE_KEYS.COLOR_PALETTE) || DEFAULT_COLOR_PALETTE
-								}
-								setSelectedNode={setSelectedNode}
-								hoveredNode={hoveredNode}
-							/>
-						),
-					},
-					{
-						key: "partition",
-						title: "Partition Diagram",
-						eventKey: "partition",
-						content: (
-							<PartitionDiagram
-								data={formattedData}
-								colorScale={
-									localStorageService.getItem(LOCAL_STORAGE_KEYS.COLOR_PALETTE) || DEFAULT_COLOR_PALETTE
-								}
-								setSelectedNode={setSelectedNode}
-								hoveredNode={hoveredNode}
-							/>
-						),
-					},
-					{
-						key: "circlePacking",
-						title: "Circle Packing",
-						eventKey: "circlePacking",
-						content: (
-							<CirclePacking
-								data={formattedData}
-								colorScale={
-									localStorageService.getItem(LOCAL_STORAGE_KEYS.COLOR_PALETTE) || DEFAULT_COLOR_PALETTE
-								}
-								setSelectedNode={setSelectedNode}
-								hoveredNode={hoveredNode}
-							/>
-						),
-					},
-				])
-			);
+	const tabs = useMemo(() => {
+		if (data.length > 0) {
+			return sortTabs([
+				{
+					key: "sunburst",
+					title: "Sunburst Chart",
+					eventKey: "sunburst",
+					content: (
+						<SunburstChart
+							data={formattedData}
+							colorScale={
+								localStorageService.getItem(LOCAL_STORAGE_KEYS.COLOR_PALETTE) || DEFAULT_COLOR_PALETTE
+							}
+							setSelectedNode={setSelectedNode}
+							hoveredNode={hoveredNode}
+						/>
+					),
+				},
+				{
+					key: "partition",
+					title: "Partition Diagram",
+					eventKey: "partition",
+					content: (
+						<PartitionDiagram
+							data={formattedData}
+							colorScale={
+								localStorageService.getItem(LOCAL_STORAGE_KEYS.COLOR_PALETTE) || DEFAULT_COLOR_PALETTE
+							}
+							setSelectedNode={setSelectedNode}
+							hoveredNode={hoveredNode}
+						/>
+					),
+				},
+				{
+					key: "circlePacking",
+					title: "Circle Packing",
+					eventKey: "circlePacking",
+					content: (
+						<CirclePacking
+							data={formattedData}
+							colorScale={
+								localStorageService.getItem(LOCAL_STORAGE_KEYS.COLOR_PALETTE) || DEFAULT_COLOR_PALETTE
+							}
+							setSelectedNode={setSelectedNode}
+							hoveredNode={hoveredNode}
+						/>
+					),
+				},
+			]);
 		}
 	}, [formattedData]);
 
-	useEffect(() => {
-		convertData();
-	}, [selectedNode, date, metric, hoveredNode]);
 
-	const handleTabChange = (tabKey) => {
+	const handleTabChange = useCallback((tabKey) => {
 		setActiveTab(tabKey);
-	};
+	}, []);
 
-	const handleMetricChange = (event) => {
+	const handleMetricChange = useCallback((event) => {
 		setMetric(event.target.value);
-		convertData();
-	};
+	}, []);
 
 	return (
 		<Container>
