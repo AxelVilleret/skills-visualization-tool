@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import {
 	Chart as ChartJS,
 	LineElement,
@@ -40,7 +40,82 @@ function MultiLineGraph({ data, onSelectDate, selectedSkill, onSelectSkill }) {
 	const [startDate, setStartDate] = useState(null);
 	const [endDate, setEndDate] = useState(null);
 	const [focusedInput, setFocusedInput] = useState(null);
-	const [showCoverLine, setShowCoverLine] = useState(true); // State for the checkbox
+	const [showCoverLine, setShowCoverLine] = useState(true);
+
+	const updates = useMemo(() => data.find((skill) => skill.name === selectedSkill)?.updates.sort((a, b) => {
+		return new Date(a.timestamp) - new Date(b.timestamp)
+	}
+	) || [], [data, selectedSkill]);
+
+	const minUpdatesDate = useMemo(() => updates.length > 0 ? updates[0].timestamp : "", [updates]);
+
+	const maxUpdatesDate = useMemo(() => updates.length > 0 ? updates[updates.length - 1].timestamp : "", [updates]);
+
+	const filteredUpdates = useMemo(() => updates.filter(
+		(update) => {
+			let americanFormat = convertFrenchToAmericanFormat(update.timestamp);
+			return (!startDate || new Date(americanFormat).getTime() >= new Date(startDate).getTime()) && (!endDate || new Date(americanFormat).getTime() <= new Date(endDate).getTime());
+		}
+	), [updates, startDate, endDate]);
+
+	const formatedDataForChart = useMemo(() => {
+
+		const formattedData = {
+			labels: filteredUpdates.map((update) => update.timestamp),
+			datasets: [
+				{
+					label: "Maitrise",
+					data: filteredUpdates.map((update) => update.mastery),
+					backgroundColor:
+						localStorageService.getItem(LOCAL_STORAGE_KEYS.COLOR_PALETTE)[0] || DEFAULT_COLOR_PALETTE[0],
+					borderColor:
+						localStorageService.getItem(LOCAL_STORAGE_KEYS.COLOR_PALETTE)[0] || DEFAULT_COLOR_PALETTE[0],
+					tension: 0.4,
+				},
+
+				{
+					label: "Couverture",
+					data: filteredUpdates.map((update) =>
+						showCoverLine ? update.cover : null
+					),
+					backgroundColor:
+						localStorageService.getItem(LOCAL_STORAGE_KEYS.COLOR_PALETTE)[1] || DEFAULT_COLOR_PALETTE[1],
+					borderColor:
+						localStorageService.getItem(LOCAL_STORAGE_KEYS.COLOR_PALETTE)[1] || DEFAULT_COLOR_PALETTE[1],
+					tension: 0.4,
+					hidden: !showCoverLine,
+				},
+
+				{
+					label: "Borne supérieure de l'intervalle de confiance",
+					data: filteredUpdates.map(
+						(update) => Math.min(update.mastery + 0.3*(1 - update.trust), 1)
+					),
+					backgroundColor: localStorageService.getItem(LOCAL_STORAGE_KEYS.COLOR_PALETTE)[2] || DEFAULT_COLOR_PALETTE[2],
+					borderColor: localStorageService.getItem(LOCAL_STORAGE_KEYS.COLOR_PALETTE)[2] || DEFAULT_COLOR_PALETTE[2],
+					borderWidth: 1,
+					type: "line",
+					fill: "+1",
+					tension: 0.1,
+				},
+				{
+					label: "Borne inférieure de l'intervalle de confiance",
+					data: filteredUpdates.map(
+						(update) => Math.max(update.mastery - 0.3*(1 - update.trust), 0)
+					),
+					backgroundColor: localStorageService.getItem(LOCAL_STORAGE_KEYS.COLOR_PALETTE)[2] || DEFAULT_COLOR_PALETTE[2],
+					borderColor: localStorageService.getItem(LOCAL_STORAGE_KEYS.COLOR_PALETTE)[2] || DEFAULT_COLOR_PALETTE[2],
+					borderWidth: 1,
+					type: "line",
+					fill: "-1",
+				},
+			],
+		};
+		return formattedData;
+	}, [filteredUpdates, showCoverLine]);
+
+
+
 
 	const zoomOptions = {
 		zoom: {
@@ -68,76 +143,27 @@ function MultiLineGraph({ data, onSelectDate, selectedSkill, onSelectSkill }) {
 		onClick: function (evt, elements) {
 			if (elements.length > 0) {
 				const index = elements[0].index;
-				const formattedData = formatDataForChart(
-					data.find((skill) => skill.name === selectedSkill)?.updates || []
-				);
-				onSelectDate(formattedData.labels[index]);
+				onSelectDate(formatedDataForChart.labels[index]);
 			}
 		},
 	};
 
-	const formatDataForChart = (data) => {
-		const filteredData = data.filter(
-			(update) =>
-			{
-				let americanFormat = convertFrenchToAmericanFormat(update.timestamp);
-				return (!startDate || new Date(americanFormat).getTime() >= new Date(startDate).getTime()) && (!endDate || new Date(americanFormat).getTime() <= new Date(endDate).getTime());
-			}	
-		);
+	
 
-		const formattedData = {
-			labels: filteredData.map((update) => update.timestamp),
-			datasets: [
-				{
-					label: "Maitrise",
-					data: filteredData.map((update) => update.mastery),
-					backgroundColor:
-						localStorageService.getItem(LOCAL_STORAGE_KEYS.COLOR_PALETTE)[0] || DEFAULT_COLOR_PALETTE[0],
-					borderColor:
-						localStorageService.getItem(LOCAL_STORAGE_KEYS.COLOR_PALETTE)[0] || DEFAULT_COLOR_PALETTE[0],
-					tension: 0.4,
-				},
 
-				{
-					label: "Couverture",
-					data: filteredData.map((update) =>
-						showCoverLine ? update.cover : null
-					),
-					backgroundColor:
-						localStorageService.getItem(LOCAL_STORAGE_KEYS.COLOR_PALETTE)[1] || DEFAULT_COLOR_PALETTE[1],
-					borderColor:
-						localStorageService.getItem(LOCAL_STORAGE_KEYS.COLOR_PALETTE)[1] || DEFAULT_COLOR_PALETTE[1],
-					tension: 0.4,
-					hidden: !showCoverLine,
-				},
 
-				{
-					label: "Borne supérieure de l'intervalle de confiance",
-					data: filteredData.map(
-						(update) => update.mastery + update.trust * 0.08
-					),
-					backgroundColor: localStorageService.getItem(LOCAL_STORAGE_KEYS.COLOR_PALETTE)[2] || DEFAULT_COLOR_PALETTE[2],
-					borderColor: localStorageService.getItem(LOCAL_STORAGE_KEYS.COLOR_PALETTE)[2] || DEFAULT_COLOR_PALETTE[2],
-					borderWidth: 1,
-					type: "line",
-					fill: "+1",
-					tension: 0.1,
-				},
-				{
-					label: "Borne inférieure de l'intervalle de confiance",
-					data: filteredData.map(
-						(update) => update.mastery - update.trust * 0.08
-					),
-					backgroundColor: localStorageService.getItem(LOCAL_STORAGE_KEYS.COLOR_PALETTE)[2] || DEFAULT_COLOR_PALETTE[2],
-					borderColor: localStorageService.getItem(LOCAL_STORAGE_KEYS.COLOR_PALETTE)[2] || DEFAULT_COLOR_PALETTE[2],
-					borderWidth: 1,
-					type: "line",
-					fill: "-1",
-				},
-			],
-		};
-		return formattedData;
-	};
+
+
+
+
+
+
+
+
+
+
+
+
 
 	const handleSkillChange = (event) => {
 		onSelectSkill(event.target.value);
@@ -161,7 +187,6 @@ function MultiLineGraph({ data, onSelectDate, selectedSkill, onSelectSkill }) {
 		<Container>
 			<Row>
 				<Col md={6}>
-					{/* Dropdown to select skill */}
 					<Form>
 						<Form.Group controlId="selectSkill" className="formSelect">
 							<Row>
@@ -189,7 +214,6 @@ function MultiLineGraph({ data, onSelectDate, selectedSkill, onSelectSkill }) {
 				</Col>
 
 				<Col md={3}>
-					{/* Date Picker for start date */}
 					<Form>
 						<Form.Group controlId="startDate">
 							<Row>
@@ -204,9 +228,9 @@ function MultiLineGraph({ data, onSelectDate, selectedSkill, onSelectSkill }) {
 										onChange={handleStartDateChange}
 										onFocus={() => setFocusedInput("startDate")}
 										open={focusedInput === "startDate"}
-										placeholderText="2023-01-01"
+										placeholderText={minUpdatesDate.split(" ")[0]}
 										className="form-control"
-										dateFormat="yyyy-MM-dd"
+										dateFormat="dd/MM/yyyy"
 									/>
 								</Col>
 							</Row>
@@ -214,7 +238,6 @@ function MultiLineGraph({ data, onSelectDate, selectedSkill, onSelectSkill }) {
 					</Form>
 				</Col>
 				<Col md={3}>
-					{/* Date Picker for start date */}
 					<Form>
 						<Form.Group controlId="endDate">
 							<Row>
@@ -229,9 +252,9 @@ function MultiLineGraph({ data, onSelectDate, selectedSkill, onSelectSkill }) {
 										onChange={handleEndDateChange}
 										onFocus={() => setFocusedInput("endDate")}
 										open={focusedInput === "endDate"}
-										placeholderText="2023-01-12"
+										placeholderText={maxUpdatesDate.split(" ")[0]}
 										className="form-control"
-										dateFormat="yyyy-MM-dd"
+										dateFormat="dd/MM/yyyy"
 									/>
 								</Col>
 							</Row>
@@ -240,14 +263,6 @@ function MultiLineGraph({ data, onSelectDate, selectedSkill, onSelectSkill }) {
 				</Col>
 
 				<Col md={12}>
-					{/* Checkbox for hiding/showing the "cover" line */}
-					{/* <Form.Check
-						type="checkbox"
-						id="showCoverLineCheckbox"
-						label="  Show Cover "
-						checked={showCoverLine}
-						onChange={handleCheckboxChange}
-					/> */}
 					<div className="mt-2 mb-2">
 						<FormGroup>
 							<FormControlLabel
@@ -262,13 +277,9 @@ function MultiLineGraph({ data, onSelectDate, selectedSkill, onSelectSkill }) {
 							/>
 						</FormGroup>
 					</div>
-					{/* Chart component */}
 					{data.length > 0 && (
 						<Line
-							data={formatDataForChart(
-								data.find((skill) => skill.name === selectedSkill)?.updates ||
-								[]
-							)}
+							data={formatedDataForChart}
 							options={options}
 							width={600}
 							height={100}

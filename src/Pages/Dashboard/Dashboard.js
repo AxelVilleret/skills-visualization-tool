@@ -32,7 +32,7 @@ export default function Dashboard({ data }) {
 	const [metric, setMetric] = useState(METRICS[0].key);
 	const [hoveredNode, setHoveredNode] = useState(null);
 
-	const formattedData = useMemo(() => adaptDataFormat(data, date, selectedNode, metric), [date, selectedNode, metric, hoveredNode]);
+	const formattedData = useMemo(() => adaptDataFormat(data, date, selectedNode, metric), [data, date, selectedNode, metric]);
 
 	const handleTabChange = useCallback((tabKey) => {
 		setActiveTab(tabKey);
@@ -65,7 +65,7 @@ export default function Dashboard({ data }) {
 								breadcrumbs={[
 									{
 										icon: <AccessTimeOutlined fontSize="small" />,
-										label: new Date(date).toLocaleString(),
+										label: new Date(date).toLocaleString().split(" ")[0],
 									},
 									{
 										icon: <LibraryBooksOutlined fontSize="small" />,

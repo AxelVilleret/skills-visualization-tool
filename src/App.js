@@ -10,8 +10,9 @@ function App() {
 
 	const [data, setData] = useState(null);
 
-	const [error, setError] = useState(null);
+	console.log("data", data);
 
+	const [error, setError] = useState(null);
 
 	useEffect(() => {
 		const fetchDataAsync = async () => {
