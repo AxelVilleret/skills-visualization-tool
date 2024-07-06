@@ -16,6 +16,8 @@ import zoomPlugin from "chartjs-plugin-zoom";
 import FormGroup from "@mui/material/FormGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Switch from "@mui/material/Switch";
+import { LOCAL_STORAGE_KEYS, DEFAULT_COLOR_PALETTE } from "../../constants.js";
+import { localStorageService } from "../../Services/LocalStorageService.js";
 
 ChartJS.register(
 	LineElement,
@@ -27,14 +29,13 @@ ChartJS.register(
 	zoomPlugin
 );
 
-function convertToAmericanFormat(frenchDate) {
+function convertFrenchToAmericanFormat(frenchDate) {
 	let parts = frenchDate.split("/");
 	let americanDate = `${parts[1]}/${parts[0]}/${parts[2]}`;
 	return americanDate;
 }
 
 function MultiLineGraph({ data, onSelectDate, selectedSkill, onSelectSkill }) {
-	console.log(selectedSkill);
 
 	const [startDate, setStartDate] = useState(null);
 	const [endDate, setEndDate] = useState(null);
@@ -75,19 +76,14 @@ function MultiLineGraph({ data, onSelectDate, selectedSkill, onSelectSkill }) {
 		},
 	};
 
-	const formatDataForChart = (dataUpdates) => {
-		const filteredData = dataUpdates.filter(
+	const formatDataForChart = (data) => {
+		const filteredData = data.filter(
 			(update) =>
 			{
-				let americanDate = convertToAmericanFormat(update.timestamp);
-				let date = new Date(americanDate);
-				return (!startDate || date.getTime() >= new Date(startDate).getTime()) && (!endDate || date.getTime() <= new Date(endDate).getTime());
-				}
-				
+				let americanFormat = convertFrenchToAmericanFormat(update.timestamp);
+				return (!startDate || new Date(americanFormat).getTime() >= new Date(startDate).getTime()) && (!endDate || new Date(americanFormat).getTime() <= new Date(endDate).getTime());
+			}	
 		);
-
-		
-		console.log(filteredData);
 
 		const formattedData = {
 			labels: filteredData.map((update) => update.timestamp),
@@ -96,9 +92,9 @@ function MultiLineGraph({ data, onSelectDate, selectedSkill, onSelectSkill }) {
 					label: "Maitrise",
 					data: filteredData.map((update) => update.mastery),
 					backgroundColor:
-						JSON.parse(localStorage.getItem("color-palette")) || "#034C65",
+						localStorageService.getItem(LOCAL_STORAGE_KEYS.COLOR_PALETTE)[0] || DEFAULT_COLOR_PALETTE[0],
 					borderColor:
-						JSON.parse(localStorage.getItem("color-palette")) || "#034C65",
+						localStorageService.getItem(LOCAL_STORAGE_KEYS.COLOR_PALETTE)[0] || DEFAULT_COLOR_PALETTE[0],
 					tension: 0.4,
 				},
 
@@ -108,9 +104,9 @@ function MultiLineGraph({ data, onSelectDate, selectedSkill, onSelectSkill }) {
 						showCoverLine ? update.cover : null
 					),
 					backgroundColor:
-						JSON.parse(localStorage.getItem("color-palette")) || "#FF865A",
+						localStorageService.getItem(LOCAL_STORAGE_KEYS.COLOR_PALETTE)[1] || DEFAULT_COLOR_PALETTE[1],
 					borderColor:
-						JSON.parse(localStorage.getItem("color-palette")) || "#034C65",
+						localStorageService.getItem(LOCAL_STORAGE_KEYS.COLOR_PALETTE)[1] || DEFAULT_COLOR_PALETTE[1],
 					tension: 0.4,
 					hidden: !showCoverLine,
 				},
@@ -120,8 +116,8 @@ function MultiLineGraph({ data, onSelectDate, selectedSkill, onSelectSkill }) {
 					data: filteredData.map(
 						(update) => update.mastery + update.trust * 0.08
 					),
-					backgroundColor: "rgba(0, 123, 255, 0.3)",
-					borderColor: "rgba(0, 123, 255, 0.7)",
+					backgroundColor: localStorageService.getItem(LOCAL_STORAGE_KEYS.COLOR_PALETTE)[2] || DEFAULT_COLOR_PALETTE[2],
+					borderColor: localStorageService.getItem(LOCAL_STORAGE_KEYS.COLOR_PALETTE)[2] || DEFAULT_COLOR_PALETTE[2],
 					borderWidth: 1,
 					type: "line",
 					fill: "+1",
@@ -132,8 +128,8 @@ function MultiLineGraph({ data, onSelectDate, selectedSkill, onSelectSkill }) {
 					data: filteredData.map(
 						(update) => update.mastery - update.trust * 0.08
 					),
-					backgroundColor: "rgba(0, 123, 255, 0.3)",
-					borderColor: "rgba(0, 123, 255, 0.7)",
+					backgroundColor: localStorageService.getItem(LOCAL_STORAGE_KEYS.COLOR_PALETTE)[2] || DEFAULT_COLOR_PALETTE[2],
+					borderColor: localStorageService.getItem(LOCAL_STORAGE_KEYS.COLOR_PALETTE)[2] || DEFAULT_COLOR_PALETTE[2],
 					borderWidth: 1,
 					type: "line",
 					fill: "-1",
@@ -158,7 +154,7 @@ function MultiLineGraph({ data, onSelectDate, selectedSkill, onSelectSkill }) {
 	};
 
 	const handleCheckboxChange = () => {
-		setShowCoverLine(!showCoverLine); // Toggle the state when the checkbox is clicked
+		setShowCoverLine(!showCoverLine);
 	};
 
 	return (
