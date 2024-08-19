@@ -125,7 +125,6 @@ const SkillTree = React.memo(({ data, selectedNode, setSelectedNode, setHoveredN
 				</div>
 			</div>
 			<Treebeard
-				className="tree-container"
 				style={treeStyle}
 				data={treeData}
 				onToggle={onToggle}

@@ -24,7 +24,6 @@
 	height: 50%; /* Adjust this value to cover the entire height of the node */
 	background-color: #e4e7ec; /* Adjust this value to set the color of the line */
 }
-
 .custom-gap {
 	gap: 50px;
 }
