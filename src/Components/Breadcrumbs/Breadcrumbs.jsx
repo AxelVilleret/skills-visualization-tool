@@ -3,7 +3,7 @@ import { emphasize, styled } from "@mui/material/styles";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Chip from "@mui/material/Chip";
 
-function BreadcrumbsComponent({ breadcrumbs }) {
+function CustomBreadcrumbs({ breadcrumbs }) {
 	const StyledBreadcrumb = styled(Chip)(({ theme }) => {
 		const backgroundColor =
 			theme.palette.mode === "light"
@@ -27,7 +27,7 @@ function BreadcrumbsComponent({ breadcrumbs }) {
 	return (
 		<Breadcrumbs
 			aria-label="breadcrumb"
-			style={{ marginBottom: "1.2rem", marginTop: "1.2rem" }}
+			className="my-3"
 			separator="-"
 		>
 			{breadcrumbs.map((breadcrumb) => (
@@ -36,10 +36,12 @@ function BreadcrumbsComponent({ breadcrumbs }) {
 					href="#"
 					label={breadcrumb.label}
 					icon={breadcrumb.icon}
+					className="breadcrumb-item" 
 				/>
 			))}
 		</Breadcrumbs>
 	);
+
 }
 
-export default BreadcrumbsComponent;
+export default CustomBreadcrumbs;

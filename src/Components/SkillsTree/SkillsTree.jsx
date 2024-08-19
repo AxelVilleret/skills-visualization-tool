@@ -4,29 +4,15 @@ import { Treebeard } from "react-treebeard";
 import treeStyle from "./treeStyle";
 import "./style.css";
 
-const Toggle = ({ style, onClick, node }) => {
-	const [isHighlighted, setIsHighlighted] = useState(false);
-
-	const handleToggle = () => {
-		console.log("clicked");
-		setIsHighlighted(!isHighlighted);
-		onClick();
-	};
-
-	useEffect(() => {
-		setIsHighlighted(false); // Reset highlight when node changes
-	}, [onClick]);
+const Toggle = ({ node, style }) => {
 
 	return (
 		<div
 			style={{
-				...style,
-				transform: isHighlighted ? "rotate(90deg)" : "rotate(0deg)",
+				transform: node.toggled ? "rotate(0deg)" : "rotate(-90deg)",
 			}}
-			className={`toggleEffect`}
-			onClick={handleToggle}
 		>
-			<ArrowDropDown className="toggle-icon" />
+			{node.children && <ArrowDropDown />}
 		</div>
 	);
 };
@@ -84,10 +70,7 @@ const decorators = {
 				>
 					{props.node.name}
 				</div>
-				<div
-					className={`d-flex justify-content-end custom-gap flex-grow-1 ${props.node.active ? `active-node` : "inactive-node"
-						}`}
-				>
+				<div className={`d-flex justify-content-end custom-gap flex-grow-1 ${props.node.active ? `active-node` : "inactive-node"}`}>
 					<div className="score-percentage">{metrics.mastery} %</div>
 					<div className="score-percentage">{metrics.trust} %</div>
 					<div className="score-percentage">{metrics.cover} %</div>
@@ -100,29 +83,34 @@ const decorators = {
 const SkillTree = React.memo(({ data, selectedNode, setSelectedNode, setHoveredNode }) => {
 	const [treeData, setTreeData] = useState({ ...data, toggled: true });
 	const [currentNode, setCurrentNode] = useState(treeData);
+	const [isMounted, setIsMounted] = useState(false);
 
-	const fetchData = () => {
+	const updateData = () => {
 		const markNodeAsActive = (node, path = []) => {
 			if (node.name === selectedNode) {
-				node.active = true;
 				path.forEach(parent => parent.toggled = true);
-				node.toggled = true;
 			}
 			if (node.children) {
 				node.children.forEach(child => markNodeAsActive(child, [...path, node]));
 			}
 		};
 		markNodeAsActive(treeData);
-		setTreeData({ ...treeData }); 
+		setTreeData({ ...treeData });
 	};
 
 	useEffect(() => {
-		fetchData();
+		if (isMounted) {
+			updateData();
+		} else {
+			setIsMounted(true);
+		}
 	}, [selectedNode]);
 
 	const onToggle = (node) => {
 		currentNode.active = false;
+		console.log(currentNode);
 		node.active = true;
+		node.toggled = true;
 		setCurrentNode(node);
 		setSelectedNode(node.name);
 	};
@@ -139,7 +127,7 @@ const SkillTree = React.memo(({ data, selectedNode, setSelectedNode, setHoveredN
 			<Treebeard
 				className="tree-container"
 				style={treeStyle}
-				data={treeData} 
+				data={treeData}
 				onToggle={onToggle}
 				decorators={{ ...decorators, Container: (props) => <decorators.Container {...props} onNodeHover={setHoveredNode} /> }}
 			/>

@@ -42,7 +42,7 @@
 }
 
 .toggleEffect {
-	transition: transform 0.3s ease; /* Example transition effect */
+	transition: transform 0.3s ease;
 }
 
 .hovered-node {
@@ -67,6 +67,3 @@
 	color: #7a7585;
 }
 
-.toggle-icon {
-	color: #98a2b3;
-}
