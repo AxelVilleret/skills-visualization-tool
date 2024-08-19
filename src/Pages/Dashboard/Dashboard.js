@@ -32,7 +32,7 @@ export default function Dashboard({ data }) {
 	const [metric, setMetric] = useState(METRICS[0].key);
 	const [hoveredNode, setHoveredNode] = useState(null);
 
-	const formattedData = useMemo(() => adaptDataFormat(data, date, selectedNode, metric), [data, date, selectedNode, metric]);
+	const formattedData = useMemo(() => adaptDataFormat(data, date, selectedNode), [data, date, selectedNode]);
 
 	const handleTabChange = useCallback((tabKey) => {
 		setActiveTab(tabKey);
@@ -46,63 +46,60 @@ export default function Dashboard({ data }) {
 		<Container>
 			<h1>Dashboard</h1>
 			<p>Ici, vous pouvez visualiser vos compétences et leur évolution dans le temps.</p>
-			<div className="d-flex flex-column">
-				<div className="shadow-sm border p-4">
-					<h2>Evolution temporelle</h2>
-					<MultiLines data={data} onSelectDate={setDate} selectedSkill={selectedNode} onSelectSkill={setSelectedNode} />
+			<div className="shadow-sm border p-4">
+				<h2>Evolution temporelle</h2>
+				<p>Vous pouvez sélectionner une date pour visualiser vos compétences à ce moment-là.</p>
+				<MultiLines data={data} onSelectDate={setDate} selectedSkill={selectedNode} onSelectSkill={setSelectedNode} />
+			</div>
+
+			<div className="d-flex justify-content-between mt-3 gap-3">
+				<div className="shadow-sm border p-4 w-50">
+					<h2>Hiérarchie</h2>
+					<p>Vous pouvez sélectionner une compétence dans la hiérarchie ci-dessous.</p>
+					<SkillTree datas={formattedData} selectedNode={selectedNode} setSelectedNode={setSelectedNode} setHoveredNode={setHoveredNode} />
 				</div>
-				
-				<div className="d-flex justify-content-between mt-3 gap-3">
-					<div className="shadow-sm border p-4 w-50">
-						<h2>Hiérarchie</h2>
-							<p>Vous pouvez sélectionner une compétence dans la hiérarchie ci-dessous.</p>
-						<SkillTree selectedNode={selectedNode} setSelectedNode={setSelectedNode} setHoveredNode={setHoveredNode}/>
-					</div>
-					<div className="shadow-sm border p-4 w-50">
-						<h2>Graphes</h2>
-						<p>Choisissez votre type de graphe préféré pour visualiser vos compétences.</p>
-							<Breadcrumbs
-								breadcrumbs={[
-									{
-										icon: <AccessTimeOutlined fontSize="small" />,
-										label: new Date(date).toLocaleString().split(" ")[0],
-									},
-									{
-										icon: <LibraryBooksOutlined fontSize="small" />,
-										label: selectedNode,
-									},
-								]}
+
+				<div className="shadow-sm border p-4 w-50">
+					<h2>Graphes</h2>
+					<p>Choisissez votre type de graphe préféré pour visualiser vos compétences.</p>
+					<Breadcrumbs
+						breadcrumbs={[
+							{
+								icon: <AccessTimeOutlined fontSize="small" />,
+								label: new Date(date).toLocaleString().split(" ")[0],
+							},
+							{
+								icon: <LibraryBooksOutlined fontSize="small" />,
+								label: selectedNode,
+							},
+						]}
+					/>
+					<FormControl fullWidth>
+						<Select value={metric} onChange={handleMetricChange}>
+							{METRICS.map((metric) => (
+								<MenuItem key={metric.key} value={metric.key}>
+									{metric.label}
+								</MenuItem>
+							))}
+						</Select>
+					</FormControl>
+					<Tabs activeKey={activeTab} onSelect={handleTabChange}>
+						{CHART_TYPES.map((chart) => (
+							<Tab eventKey={chart} title={chart} key={chart}>
+								<Chart type={chart} data={formattedData} colorScale={localStorageService.getItem(LOCAL_STORAGE_KEYS.COLOR_PALETTE) || DEFAULT_COLOR_PALETTE} setSelectedNode={setSelectedNode} hoveredNode={hoveredNode} metric={metric} />
+							</Tab>
+						))}
+					</Tabs>
+					<div className="d-flex justify-content-end">
+						<CustomPopover>
+							<Legend
+								colorScale={
+									JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEYS.COLOR_PALETTE)) ||
+									DEFAULT_COLOR_PALETTE
+								}
+								titles={LEGEND}
 							/>
-						<FormControl fullWidth>
-							<Select value={metric} onChange={handleMetricChange}>
-								{METRICS.map((metric) => (
-									<MenuItem key={metric.key} value={metric.key}>
-										{metric.label}
-									</MenuItem>
-								))}
-							</Select>
-						</FormControl>
-								<Tabs
-									activeKey={activeTab}
-									onSelect={handleTabChange}
-								>
-									{CHART_TYPES.map((chart) => (
-										<Tab eventKey={chart} title={chart} key={chart}>
-											<Chart type={chart} data={formattedData} colorScale={localStorageService.getItem(LOCAL_STORAGE_KEYS.COLOR_PALETTE) || DEFAULT_COLOR_PALETTE} setSelectedNode={setSelectedNode} hoveredNode={hoveredNode} />
-										</Tab>
-									))}
-								</Tabs>
-								<div className="d-flex justify-content-end">
-									<CustomPopover>
-										<Legend
-											colorScale={
-												JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEYS.COLOR_PALETTE)) ||
-												DEFAULT_COLOR_PALETTE
-											}
-											titles={LEGEND}
-										/>
-									</CustomPopover>
-								</div>
+						</CustomPopover>
 					</div>
 				</div>
 			</div>

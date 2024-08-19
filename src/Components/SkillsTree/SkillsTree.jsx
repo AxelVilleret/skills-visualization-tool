@@ -44,20 +44,14 @@ const decorators = {
 		return <div style={props.style}>{props.node.name}</div>;
 	},
 	Container: (props) => {
-		const [data, setData] = useState([]);
 		const [metrics, setMetrics] = useState({});
 		const [isHovered, setIsHovered] = useState(false);
-
-		const fetchData = async () => {
-			setData(await fetchTreeData());
-		};
 
 		const fetchMetrics = async () => {
 			setMetrics(await findUpdatesByNodeName(props.node.name));
 		};
 
 		useEffect(() => {
-			fetchData();
 			fetchMetrics();
 		}, []);
 
@@ -111,20 +105,20 @@ const decorators = {
 	},
 };
 
-const SkillTree = React.memo(({ selectedNode, setSelectedNode, setHoveredNode }) => {
-	const [data, setData] = useState([]);
-	const [cursor, setCursor] = useState(false);
+const SkillTree = React.memo(({ datas, selectedNode, setSelectedNode, setHoveredNode }) => {
+	const [data, setData] = useState({ ...datas, toggled: true });
 
-	const fetchData = async () => {
-		const treeData = await fetchTreeData();
+
+	const fetchData = () => {
+		const treeData = data;
+		console.log(datas);
 
 		const markNodeAsActive = (node, path = []) => {
 			if (node.name === selectedNode) {
 				node.active = true;
-				setCursor(node);
 				path.forEach(parent => parent.toggled = true);
 				node.toggled = true;
-				node.children.forEach(child => child.toggled = true);
+				
 			}
 			if (node.children) {
 				node.children.forEach(child => markNodeAsActive(child, [...path, node]));
@@ -140,19 +134,7 @@ const SkillTree = React.memo(({ selectedNode, setSelectedNode, setHoveredNode })
 	}, [selectedNode]);
 
 	const onToggle = (node, toggled) => {
-		if (cursor) {
-			cursor.active = false;
-		}
-		node.active = true;
-		if (node.children) {
-			node.toggled = toggled;
-		}
-		setCursor(node);
-		if (setSelectedNode) {
-			setSelectedNode(node.name);
-			setData(Object.assign({}, data));
-		}
-
+		setSelectedNode(node.name);
 	};
 
 	return (

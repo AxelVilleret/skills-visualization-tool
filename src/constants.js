@@ -5,8 +5,8 @@ export const LOCAL_STORAGE_KEYS = {
 };
 
 export const COLOR_PALETTES = [
-    ["#26547c", "#ef476f", "#ffd166"],
-    ["#002642", "#840032", "#e59500"],
+    ["#ffd166", "#ef476f", "#26547c"],
+    ["#e59500", "#840032", "#002642"],
     ["#f1dede", "#d496a7", "#5d576b"],
 ];
 

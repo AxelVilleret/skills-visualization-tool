@@ -11,9 +11,8 @@ import {
 import { Line } from "react-chartjs-2";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { Container, Row, Col, Form, } from "react-bootstrap";
+import { Form } from "react-bootstrap";
 import zoomPlugin from "chartjs-plugin-zoom";
-import FormGroup from "@mui/material/FormGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Switch from "@mui/material/Switch";
 import { LOCAL_STORAGE_KEYS, DEFAULT_COLOR_PALETTE } from "../../constants.js";
@@ -35,7 +34,10 @@ function convertFrenchToAmericanFormat(frenchDate) {
 	return americanDate;
 }
 
-function MultiLineGraph({ data, onSelectDate, selectedSkill, onSelectSkill }) {
+const START_DATE = "startDate";
+const END_DATE = "endDate";
+
+function MultiLines({ data, onSelectDate, selectedSkill, onSelectSkill }) {
 
 	const [startDate, setStartDate] = useState(null);
 	const [endDate, setEndDate] = useState(null);
@@ -59,40 +61,32 @@ function MultiLineGraph({ data, onSelectDate, selectedSkill, onSelectSkill }) {
 	), [updates, startDate, endDate]);
 
 	const formatedDataForChart = useMemo(() => {
-
+		const colorPalette = localStorageService.getItem(LOCAL_STORAGE_KEYS.COLOR_PALETTE) || DEFAULT_COLOR_PALETTE;
 		const formattedData = {
 			labels: filteredUpdates.map((update) => update.timestamp),
 			datasets: [
 				{
 					label: "Maitrise",
 					data: filteredUpdates.map((update) => update.mastery),
-					backgroundColor:
-						localStorageService.getItem(LOCAL_STORAGE_KEYS.COLOR_PALETTE)[0] || DEFAULT_COLOR_PALETTE[0],
-					borderColor:
-						localStorageService.getItem(LOCAL_STORAGE_KEYS.COLOR_PALETTE)[0] || DEFAULT_COLOR_PALETTE[0],
+					backgroundColor: colorPalette[0],
+					borderColor: colorPalette[0],
 					tension: 0.4,
 				},
-
 				{
 					label: "Couverture",
-					data: filteredUpdates.map((update) =>
-						showCoverLine ? update.cover : null
-					),
-					backgroundColor:
-						localStorageService.getItem(LOCAL_STORAGE_KEYS.COLOR_PALETTE)[1] || DEFAULT_COLOR_PALETTE[1],
-					borderColor:
-						localStorageService.getItem(LOCAL_STORAGE_KEYS.COLOR_PALETTE)[1] || DEFAULT_COLOR_PALETTE[1],
+					data: filteredUpdates.map((update) => showCoverLine ? update.cover : null),
+					backgroundColor: colorPalette[1],
+					borderColor: colorPalette[1],
 					tension: 0.4,
 					hidden: !showCoverLine,
 				},
-
 				{
 					label: "Borne supérieure de l'intervalle de confiance",
 					data: filteredUpdates.map(
-						(update) => Math.min(update.mastery + 0.3*(1 - update.trust), 1)
+						(update) => Math.min(update.mastery + 0.3 * (1 - update.trust), 1)
 					),
-					backgroundColor: localStorageService.getItem(LOCAL_STORAGE_KEYS.COLOR_PALETTE)[2] || DEFAULT_COLOR_PALETTE[2],
-					borderColor: localStorageService.getItem(LOCAL_STORAGE_KEYS.COLOR_PALETTE)[2] || DEFAULT_COLOR_PALETTE[2],
+					backgroundColor: colorPalette[2],
+					borderColor: colorPalette[2],
 					borderWidth: 1,
 					type: "line",
 					fill: "+1",
@@ -101,10 +95,10 @@ function MultiLineGraph({ data, onSelectDate, selectedSkill, onSelectSkill }) {
 				{
 					label: "Borne inférieure de l'intervalle de confiance",
 					data: filteredUpdates.map(
-						(update) => Math.max(update.mastery - 0.3*(1 - update.trust), 0)
+						(update) => Math.max(update.mastery - 0.3 * (1 - update.trust), 0)
 					),
-					backgroundColor: localStorageService.getItem(LOCAL_STORAGE_KEYS.COLOR_PALETTE)[2] || DEFAULT_COLOR_PALETTE[2],
-					borderColor: localStorageService.getItem(LOCAL_STORAGE_KEYS.COLOR_PALETTE)[2] || DEFAULT_COLOR_PALETTE[2],
+					backgroundColor: colorPalette[2],
+					borderColor: colorPalette[2],
 					borderWidth: 1,
 					type: "line",
 					fill: "-1",
@@ -113,9 +107,6 @@ function MultiLineGraph({ data, onSelectDate, selectedSkill, onSelectSkill }) {
 		};
 		return formattedData;
 	}, [filteredUpdates, showCoverLine]);
-
-
-
 
 	const zoomOptions = {
 		zoom: {
@@ -131,6 +122,7 @@ function MultiLineGraph({ data, onSelectDate, selectedSkill, onSelectSkill }) {
 			mode: "xy",
 		},
 	};
+
 	const options = {
 		scales: {
 			y: {
@@ -148,30 +140,13 @@ function MultiLineGraph({ data, onSelectDate, selectedSkill, onSelectSkill }) {
 		},
 	};
 
-	
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 	const handleSkillChange = (event) => {
 		onSelectSkill(event.target.value);
 	};
 
 	const handleStartDateChange = (date) => {
 		setStartDate(date);
-		setFocusedInput("endDate");
+		setFocusedInput(END_DATE);
 	};
 
 	const handleEndDateChange = (date) => {
@@ -184,111 +159,82 @@ function MultiLineGraph({ data, onSelectDate, selectedSkill, onSelectSkill }) {
 	};
 
 	return (
-		<Container>
-			<Row>
-				<Col md={6}>
-					<Form>
-						<Form.Group controlId="selectSkill" className="formSelect">
-							<Row>
-								<Col>
-									<Form.Label>Sélectionner une compétence</Form.Label>
-								</Col>
-							</Row>
-							<Row>
-								<Col>
-									<Form.Control
-										as="select"
-										value={selectedSkill}
-										onChange={handleSkillChange}
-									>
-										{data.map((skill) => (
-											<option key={skill.name} value={skill.name}>
-												{skill.name}
-											</option>
-										))}
-									</Form.Control>
-								</Col>
-							</Row>
-						</Form.Group>
-					</Form>
-				</Col>
+		<>
+			<div className="d-flex align-content-between">
 
-				<Col md={3}>
-					<Form>
-						<Form.Group controlId="startDate">
-							<Row>
-								<Col>
-									<Form.Label>Date de début</Form.Label>
-								</Col>
-							</Row>
-							<Row>
-								<Col>
-									<DatePicker
-										selected={startDate}
-										onChange={handleStartDateChange}
-										onFocus={() => setFocusedInput("startDate")}
-										open={focusedInput === "startDate"}
-										placeholderText={minUpdatesDate.split(" ")[0]}
-										className="form-control"
-										dateFormat="dd/MM/yyyy"
-									/>
-								</Col>
-							</Row>
-						</Form.Group>
-					</Form>
-				</Col>
-				<Col md={3}>
-					<Form>
-						<Form.Group controlId="endDate">
-							<Row>
-								<Col>
-									<Form.Label>Date de fin</Form.Label>
-								</Col>
-							</Row>
-							<Row>
-								<Col>
-									<DatePicker
-										selected={endDate}
-										onChange={handleEndDateChange}
-										onFocus={() => setFocusedInput("endDate")}
-										open={focusedInput === "endDate"}
-										placeholderText={maxUpdatesDate.split(" ")[0]}
-										className="form-control"
-										dateFormat="dd/MM/yyyy"
-									/>
-								</Col>
-							</Row>
-						</Form.Group>
-					</Form>
-				</Col>
+				<div className="d-flex flex-column">
+					<label htmlFor="selectSkill">Sélectionner une compétence</label>
+					<Form.Control
+						id="selectSkill"
+						as="select"
+						value={selectedSkill}
+						onChange={handleSkillChange}
+					>
+						{data.map((skill) => (
+							<option key={skill.name} value={skill.name}>
+								{skill.name}
+							</option>
+						))}
+					</Form.Control>
 
-				<Col md={12}>
-					<div className="mt-2 mb-2">
-						<FormGroup>
-							<FormControlLabel
-								control={
-									<Switch
-										defaultChecked={showCoverLine}
-										onChange={handleCheckboxChange}
-									/>
-								}
-								label="Couverture"
-								style={{ fontSize: "0.8rem" }}
-							/>
-						</FormGroup>
-					</div>
-					{data.length > 0 && (
-						<Line
-							data={formatedDataForChart}
-							options={options}
-							width={600}
-							height={100}
-						></Line>
-					)}
-				</Col>
-			</Row>
-		</Container>
+				</div>
+
+				<div className="d-flex flex-column">
+					<label htmlFor="startDate">Date de début</label>
+					<DatePicker
+						id="startDate"
+						selected={startDate}
+						onChange={handleStartDateChange}
+						onFocus={() => setFocusedInput(START_DATE)}
+						open={focusedInput === START_DATE}
+						placeholderText={minUpdatesDate.split(" ")[0]}
+						className="form-control"
+						dateFormat="dd/MM/yyyy"
+					/>
+
+				</div>
+
+				<div className="d-flex flex-column">
+					<label htmlFor="endDate">Date de fin</label>
+					<DatePicker
+						id="endDate"
+						selected={endDate}
+						onChange={handleEndDateChange}
+						onFocus={() => setFocusedInput(END_DATE)}
+						open={focusedInput === END_DATE}
+						placeholderText={maxUpdatesDate.split(" ")[0]}
+						className="form-control"
+						dateFormat="dd/MM/yyyy"
+					/>
+
+				</div>
+
+			</div>
+
+			<Form.Group controlId="showCover">
+				<FormControlLabel
+					control={
+						<Switch
+							defaultChecked={showCoverLine}
+							onChange={handleCheckboxChange}
+						/>
+					}
+					label="Couverture"
+				/>
+			</Form.Group>
+			{
+				data.length > 0 && (
+					<Line
+						data={formatedDataForChart}
+						options={options}
+						width={600}
+						height={100}
+					></Line>
+				)
+			}
+		</>
+
 	);
 }
 
-export default MultiLineGraph;
+export default MultiLines;

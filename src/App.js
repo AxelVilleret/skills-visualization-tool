@@ -10,8 +10,6 @@ function App() {
 
 	const [data, setData] = useState(null);
 
-	console.log("data", data);
-
 	const [error, setError] = useState(null);
 
 	useEffect(() => {
