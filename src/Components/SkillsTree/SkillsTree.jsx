@@ -3,10 +3,6 @@ import React, { useState, useEffect } from "react";
 import { Treebeard } from "react-treebeard";
 import treeStyle from "./treeStyle";
 import "./style.css";
-import {
-	fetchTreeData,
-	findUpdatesByNodeName,
-} from "../../Services/TreeDataFetchingService";
 
 const Toggle = ({ style, onClick, node }) => {
 	const [isHighlighted, setIsHighlighted] = useState(false);
@@ -44,16 +40,12 @@ const decorators = {
 		return <div style={props.style}>{props.node.name}</div>;
 	},
 	Container: (props) => {
-		const [metrics, setMetrics] = useState({});
-		const [isHovered, setIsHovered] = useState(false);
-
-		const fetchMetrics = async () => {
-			setMetrics(await findUpdatesByNodeName(props.node.name));
+		const metrics = {
+			mastery: Math.round(props.node.value.mastery * 100),
+			trust: Math.round(props.node.value.trust * 100),
+			cover: Math.round(props.node.value.cover * 100),
 		};
-
-		useEffect(() => {
-			fetchMetrics();
-		}, []);
+		const [isHovered, setIsHovered] = useState(false);
 
 		const handleMouseOver = () => {
 			setIsHovered(true);
@@ -105,35 +97,33 @@ const decorators = {
 	},
 };
 
-const SkillTree = React.memo(({ datas, selectedNode, setSelectedNode, setHoveredNode }) => {
-	const [data, setData] = useState({ ...datas, toggled: true });
-
+const SkillTree = React.memo(({ data, selectedNode, setSelectedNode, setHoveredNode }) => {
+	const [treeData, setTreeData] = useState({ ...data, toggled: true });
+	const [currentNode, setCurrentNode] = useState(treeData);
 
 	const fetchData = () => {
-		const treeData = data;
-		console.log(datas);
-
 		const markNodeAsActive = (node, path = []) => {
 			if (node.name === selectedNode) {
 				node.active = true;
 				path.forEach(parent => parent.toggled = true);
 				node.toggled = true;
-				
 			}
 			if (node.children) {
 				node.children.forEach(child => markNodeAsActive(child, [...path, node]));
 			}
 		};
 		markNodeAsActive(treeData);
-
-		setData(treeData);
+		setTreeData({ ...treeData }); 
 	};
 
 	useEffect(() => {
 		fetchData();
 	}, [selectedNode]);
 
-	const onToggle = (node, toggled) => {
+	const onToggle = (node) => {
+		currentNode.active = false;
+		node.active = true;
+		setCurrentNode(node);
 		setSelectedNode(node.name);
 	};
 
@@ -149,12 +139,12 @@ const SkillTree = React.memo(({ datas, selectedNode, setSelectedNode, setHovered
 			<Treebeard
 				className="tree-container"
 				style={treeStyle}
-				data={data}
+				data={treeData} 
 				onToggle={onToggle}
 				decorators={{ ...decorators, Container: (props) => <decorators.Container {...props} onNodeHover={setHoveredNode} /> }}
 			/>
 		</div>
 	);
-})
+});
 
 export default SkillTree;
