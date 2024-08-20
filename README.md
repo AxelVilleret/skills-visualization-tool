@@ -24,4 +24,4 @@ To install and run this project, follow these steps:
 
 ## Usage 
 
-You can use the application via the following link: [Skills visualization tool](https://skills-vizualisation-tool.netlify.app/).
+You can use the application via the following link: [Skills visualization tool](https://skills-vizualisation-tool.netlify.app/). [![Netlify Status](https://api.netlify.com/api/v1/badges/50092e54-fa99-4760-9903-847fe1abbfde/deploy-status)](https://app.netlify.com/sites/skills-vizualisation-tool/deploys)
