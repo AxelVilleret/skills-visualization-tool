@@ -12,6 +12,13 @@ export const COLOR_PALETTES = [
 
 export const DEFAULT_COLOR_PALETTE = COLOR_PALETTES[0];
 
+export const INACTIVE_COLOR = "#000000";
+
+export const ACTIVE_COLOR = "#FF0000";
+
+export const HOVERED_COLOR = "#00FF00";
+
+
 export const DEFAULT_TAB_ORDER = ["Sunburst Chart", "Partition Diagram", "Circle Packing"];
 
 export const METRICS = [

@@ -1,8 +1,9 @@
 import { ArrowDropDown } from "@mui/icons-material";
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Treebeard } from "react-treebeard";
 import treeStyle from "./treeStyle";
 import "./style.css";
+import { ACTIVE_COLOR, INACTIVE_COLOR, HOVERED_COLOR } from "../../constants";
 
 const Toggle = ({ node, style }) => {
 
@@ -63,16 +64,14 @@ const decorators = {
 			>
 				<decorators.Toggle {...props} />
 				<div
-					className={
-						isHovered ? "hovered-node" : isActive ? `active-node` :  "inactive-node"
-					}
+					style={{ color: isHovered ? HOVERED_COLOR : isActive ? ACTIVE_COLOR : INACTIVE_COLOR }}
 				>
 					{props.node.name}
 				</div>
-				<div className={`d-flex justify-content-end custom-gap flex-grow-1 ${props.node.active ? `active-node` : "inactive-node"}`}>
-					<div className="score-percentage">{metrics.mastery} %</div>
-					<div className="score-percentage">{metrics.trust} %</div>
-					<div className="score-percentage">{metrics.cover} %</div>
+				<div className={`d-flex justify-content-end custom-gap flex-grow-1`}>
+					<div>{metrics.mastery} %</div>
+					<div>{metrics.trust} %</div>
+					<div>{metrics.cover} %</div>
 				</div>
 			</div>
 		);
@@ -81,8 +80,8 @@ const decorators = {
 
 const SkillTree = React.memo(({ data, selectedNode, onSelectNode, hoveredNode, onNodeHover }) => {
 
-	const [treeData, setTreeData] = useState({ ...data, toggled: true });
-	const [previousNode, setPreviousNode] = useState(treeData);
+	const [treeData, setTreeData] = useState(data);
+	const [previousNode, setPreviousNode] = useState(data);
 
 	const currentNode = useMemo(() => {
 		const findNode = (node) => {
@@ -100,11 +99,12 @@ const SkillTree = React.memo(({ data, selectedNode, onSelectNode, hoveredNode, o
 			return null;
 		};
 		return findNode(treeData);
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [selectedNode]);
 
 	const onToggle = (node) => {
 		onSelectNode(node.name);
-		if (node.children && node.active) {
+		if (node.active || (!node.active && !node.toggled)) {
 			node.toggled = !node.toggled;
 			setTreeData({ ...treeData });
 		}
@@ -120,10 +120,13 @@ const SkillTree = React.memo(({ data, selectedNode, onSelectNode, hoveredNode, o
 				node.children.forEach((child) => markNodeAsActive(child, [...path, node]));
 			}
 		};
+		treeData.active = false;
+		
 		previousNode.active = false;
 		setPreviousNode(currentNode);
 		markNodeAsActive(treeData);
 		setTreeData({ ...treeData });
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [currentNode]);
 
 
@@ -131,9 +134,9 @@ const SkillTree = React.memo(({ data, selectedNode, onSelectNode, hoveredNode, o
 		<div className="w-fit-content">
 			<div className="d-flex w-100 justify-content-end pb-3">
 				<div className="d-flex w-fit-content header-gap custom-border pb-2">
-					<div className="table-header">Maitrise</div>
-					<div className="table-header">Confiance</div>
-					<div className="table-header">Couverture</div>
+					<div>Maitrise</div>
+					<div>Confiance</div>
+					<div>Couverture</div>
 				</div>
 			</div>
 			<Treebeard

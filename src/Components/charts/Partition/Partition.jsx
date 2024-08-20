@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
-import { LOCAL_STORAGE_KEYS, DEFAULT_COLOR_PALETTE } from '../../../constants.js';
+import { LOCAL_STORAGE_KEYS, DEFAULT_COLOR_PALETTE, HOVERED_COLOR } from '../../../constants.js';
 import { localStorageService } from '../../../Services/LocalStorageService.js';
 
 const PartitionDiagram = ({ data, onSelectNode, hoveredNode, onNodeHover }) => {
@@ -46,7 +46,7 @@ const PartitionDiagram = ({ data, onSelectNode, hoveredNode, onNodeHover }) => {
         .attr("height", d => d.y1 - d.y0)
         .attr("fill", d => {
           if (d.data.name === hoveredNode) {
-            return "#00FF00";
+            return HOVERED_COLOR;
           } else if (d.data.id <= 40) {
             return colorScale[0];
           } else if (d.data.id > 40 && d.data.id <= 80) {
@@ -91,7 +91,7 @@ const PartitionDiagram = ({ data, onSelectNode, hoveredNode, onNodeHover }) => {
     };
 
     updateChart(data);
-  }, [data, colorScale, hoveredNode, onSelectNode]);
+  }, [data, colorScale, hoveredNode, onSelectNode, onNodeHover]);
 
   return <svg ref={ref} />;
 };

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
-import { LOCAL_STORAGE_KEYS, DEFAULT_COLOR_PALETTE } from '../../../constants.js';
+import { LOCAL_STORAGE_KEYS, DEFAULT_COLOR_PALETTE, HOVERED_COLOR } from '../../../constants.js';
 import { localStorageService } from '../../../Services/LocalStorageService.js';
 
 const CirclePacking = ({ data, onSelectNode, hoveredNode, onNodeHover }) => {
@@ -48,7 +48,7 @@ const CirclePacking = ({ data, onSelectNode, hoveredNode, onNodeHover }) => {
             node.append("circle")
                 .attr("fill", d => {
                     if (d.data.name === hoveredNode) {
-                        return "#00FF00";
+                        return HOVERED_COLOR;
                     }
                     else if (d.data.id <= 40) {
                         return colorScale[0];

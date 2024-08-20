@@ -44,25 +44,3 @@
 	transition: transform 0.3s ease;
 }
 
-.hovered-node {
-	color: #00ff00;
-	font-weight: bold;
-}
-
-.active-node {
-	color: #422f8a;
-	font-weight: bold;
-}
-
-.inactive-node {
-	color: #475467;
-}
-
-.score-percentage {
-	color: #c6c6c6;
-}
-
-.table-header {
-	color: #7a7585;
-}
-
