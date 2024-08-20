@@ -41,7 +41,7 @@ export default function Sidenav() {
 			</button>
 
 			{/* Accès rapide section */}
-			{open && <div className={styles.sectionTitle}>Visualisation</div>}
+			{open && <div className={styles.sectionTitle}>Visualization</div>}
 			{navData.slice(0, 1).map((item) => (
 				<NavLink
 					key={item.id}
