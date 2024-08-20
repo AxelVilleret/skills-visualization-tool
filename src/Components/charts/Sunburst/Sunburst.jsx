@@ -3,7 +3,7 @@ import * as d3 from 'd3';
 import { LOCAL_STORAGE_KEYS, DEFAULT_COLOR_PALETTE } from '../../../constants.js';
 import { localStorageService } from '../../../Services/LocalStorageService.js';
 
-const SunburstChart = ({ data, onSelectNode, hoveredNode }) => {
+const SunburstChart = ({ data, onSelectNode, hoveredNode, onNodeHover }) => {
 
   const colorScale = localStorageService.getItem(LOCAL_STORAGE_KEYS.COLOR_PALETTE) || DEFAULT_COLOR_PALETTE
 
@@ -66,13 +66,10 @@ const SunburstChart = ({ data, onSelectNode, hoveredNode }) => {
       node.on("click", (event, d) => {
         updateChart(d.data);
         onSelectNode(d.data.name);
-      });
-
-      node.on("mouseover", function (event, d) {
-        d3.select(this).attr("stroke", "#000").attr("stroke-width", 2);
-      })
-      node.on("mouseout", function (event, d) {
-        d3.select(this).attr("stroke", null).attr("stroke-width", null);
+      }).on("mouseover", function (event, d) {
+        onNodeHover(d.data.name);
+      }).on("mouseout", function (event, d) {
+        onNodeHover(null);
       });
 
       // Add text to each path
@@ -97,7 +94,7 @@ const SunburstChart = ({ data, onSelectNode, hoveredNode }) => {
     };
 
     updateChart(data);
-  }, [data, colorScale, hoveredNode, onSelectNode]);
+  }, [data, colorScale, hoveredNode, onSelectNode, onNodeHover]);
 
   return <svg ref={ref} />;
 };

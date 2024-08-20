@@ -2,7 +2,7 @@ import React, { useMemo, useState, useCallback } from "react";
 import { Container, Tabs, Tab, } from "react-bootstrap";
 import SkillTree from "../../Components/SkillsTree/SkillsTree.jsx";
 import MultiLines from "../../Components/MultiLines/MultiLines.jsx";
-import { adaptDataFormat } from "../../Services/AdapterService.js";
+import { adaptDataFormat, findRoot } from "../../Services/AdapterService.js";
 import Legend from "../../Components/Legend/Legend.jsx";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
@@ -28,7 +28,7 @@ export default function Dashboard({ data }) {
 	const today = new Date().toISOString("fr-FR");
 	const [activeTab, setActiveTab] = useState(CHART_TYPES[0].key);
 	const [date, setDate] = useState(today);
-	const [selectedNode, setSelectedNode] = useState(data[0].name);
+	const [selectedNode, setSelectedNode] = useState(findRoot(data));
 	const [metric, setMetric] = useState(METRICS[0].key);
 	const [hoveredNode, setHoveredNode] = useState(null);
 
@@ -56,7 +56,7 @@ export default function Dashboard({ data }) {
 				<div className="shadow-sm border p-4 w-50">
 					<h2>Hiérarchie</h2>
 					<p>Vous pouvez sélectionner une compétence dans la hiérarchie ci-dessous.</p>
-					<SkillTree data={formattedData} selectedNode={selectedNode} onSelectNode={setSelectedNode} onNodeHover={setHoveredNode} />
+					<SkillTree data={formattedData} selectedNode={selectedNode} onSelectNode={setSelectedNode} hoveredNode={hoveredNode} onNodeHover={setHoveredNode} />
 				</div>
 
 				<div className="shadow-sm border p-4 w-50">
@@ -86,7 +86,7 @@ export default function Dashboard({ data }) {
 					<Tabs activeKey={activeTab} onSelect={handleTabChange}>
 						{CHART_TYPES.map((chart) => (
 							<Tab eventKey={chart} title={chart} key={chart}>
-								<Chart type={chart} data={formattedData} onSelectNode={setSelectedNode} hoveredNode={hoveredNode} metric={metric} />
+								<Chart type={chart} data={formattedData} onSelectNode={setSelectedNode} hoveredNode={hoveredNode} onNodeHover={setHoveredNode} metric={metric} />
 							</Tab>
 						))}
 					</Tabs>

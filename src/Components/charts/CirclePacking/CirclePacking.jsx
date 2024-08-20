@@ -3,7 +3,7 @@ import * as d3 from 'd3';
 import { LOCAL_STORAGE_KEYS, DEFAULT_COLOR_PALETTE } from '../../../constants.js';
 import { localStorageService } from '../../../Services/LocalStorageService.js';
 
-const CirclePacking = ({ data, onSelectNode, hoveredNode }) => {
+const CirclePacking = ({ data, onSelectNode, hoveredNode, onNodeHover }) => {
 
     const colorScale = localStorageService.getItem(LOCAL_STORAGE_KEYS.COLOR_PALETTE) || DEFAULT_COLOR_PALETTE
 
@@ -87,8 +87,15 @@ const CirclePacking = ({ data, onSelectNode, hoveredNode }) => {
         svgContainer.selectAll("circle").on("click", (event, d) => {
             updateChart(d.data);
             onSelectNode(d.data.name);
-        });
-    }, [data, colorScale, hoveredNode, onSelectNode]);
+        })
+            .on("mouseover", function (event, d) {
+                onNodeHover(d.data.name);
+            })
+            .on("mouseout", function (event, d) {
+                onNodeHover(null);
+            });
+
+    }, [data, colorScale, hoveredNode, onSelectNode, onNodeHover]);
 
     return <svg ref={ref} />;
 };

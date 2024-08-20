@@ -1,5 +1,5 @@
 import { ArrowDropDown } from "@mui/icons-material";
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { Treebeard } from "react-treebeard";
 import treeStyle from "./treeStyle";
 import "./style.css";
@@ -31,17 +31,16 @@ const decorators = {
 			trust: Math.round(props.node.value.trust * 100),
 			cover: Math.round(props.node.value.cover * 100),
 		};
-		const [isHovered, setIsHovered] = useState(false);
+		const isHovered = props.hoveredNode === props.node.name;
+		const isActive = props.node.active;
 
 		const handleMouseOver = () => {
-			setIsHovered(true);
 			if (props.onNodeHover) {
 				props.onNodeHover(props.node.name);
 			}
 		};
 
 		const handleMouseOut = () => {
-			setIsHovered(false);
 			if (props.onNodeHover) {
 				props.onNodeHover(null);
 			}
@@ -65,7 +64,7 @@ const decorators = {
 				<decorators.Toggle {...props} />
 				<div
 					className={
-						props.node.active ? `active-node` : isHovered ? "hovered-node" : "inactive-node"
+						isHovered ? "hovered-node" : isActive ? `active-node` :  "inactive-node"
 					}
 				>
 					{props.node.name}
@@ -80,31 +79,53 @@ const decorators = {
 	},
 };
 
-const SkillTree = React.memo(({ data, selectedNode, onSelectNode, onNodeHover }) => {
-	const [treeData, setTreeData] = useState({ ...data, toggled: true });
-	const [currentNode, setCurrentNode] = useState(treeData);
+const SkillTree = React.memo(({ data, selectedNode, onSelectNode, hoveredNode, onNodeHover }) => {
 
-	const onToggle = useCallback((node) => {
-		currentNode.active = false;
-		node.active = true;
-		node.toggled = true;
-		setCurrentNode(node);
-		onSelectNode(node.name);
-		const markNodeAsActive = (node, path = []) => {
+	const [treeData, setTreeData] = useState({ ...data, toggled: true });
+	const [previousNode, setPreviousNode] = useState(treeData);
+
+	const currentNode = useMemo(() => {
+		const findNode = (node) => {
 			if (node.name === selectedNode) {
-				path.forEach(parent => parent.toggled = true);
+				return node;
 			}
 			if (node.children) {
-				node.children.forEach(child => markNodeAsActive(child, [...path, node]));
+				for (let child of node.children) {
+					const found = findNode(child);
+					if (found) {
+						return found;
+					}
+				}
 			}
+			return null;
 		};
-		markNodeAsActive(treeData);
-		setTreeData({ ...treeData });
-	}, [selectedNode, onSelectNode, treeData, currentNode]);
+		return findNode(treeData);
+	}, [selectedNode]);
+
+	const onToggle = (node) => {
+		onSelectNode(node.name);
+		if (node.children && node.active) {
+			node.toggled = !node.toggled;
+			setTreeData({ ...treeData });
+		}
+	};
 
 	useEffect(() => {
-		onToggle(currentNode);
-	}, []);
+		const markNodeAsActive = (node, path = []) => {
+			if (node.name === selectedNode) {
+				path.forEach((parent) => (parent.toggled = true));
+				currentNode.active = true;
+			}
+			if (node.children) {
+				node.children.forEach((child) => markNodeAsActive(child, [...path, node]));
+			}
+		};
+		previousNode.active = false;
+		setPreviousNode(currentNode);
+		markNodeAsActive(treeData);
+		setTreeData({ ...treeData });
+	}, [currentNode]);
+
 
 	return (
 		<div className="w-fit-content">
@@ -119,7 +140,7 @@ const SkillTree = React.memo(({ data, selectedNode, onSelectNode, onNodeHover })
 				style={treeStyle}
 				data={treeData}
 				onToggle={onToggle}
-				decorators={{ ...decorators, Container: (props) => <decorators.Container {...props} onNodeHover={onNodeHover} /> }}
+				decorators={{ ...decorators, Container: (props) => <decorators.Container {...props} hoveredNode={hoveredNode} onNodeHover={onNodeHover} /> }}
 			/>
 		</div>
 	);

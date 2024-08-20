@@ -5,7 +5,7 @@ import CirclePacking from "./CirclePacking/CirclePacking.jsx";
 import { DEFAULT_TAB_ORDER } from '../../constants.js';
 import { updateTreeValues } from '../../Services/AdapterService.js';
 
-const Chart = ({ type, data, onSelectNode, hoveredNode, metric }) => {
+const Chart = ({ type, data, onSelectNode, hoveredNode, onNodeHover, metric }) => {
 
     data = updateTreeValues(data, metric);
     switch (type) {
@@ -15,6 +15,7 @@ const Chart = ({ type, data, onSelectNode, hoveredNode, metric }) => {
                     data={data}
                     onSelectNode={onSelectNode}
                     hoveredNode={hoveredNode}
+                    onNodeHover={onNodeHover}
                 />
             );
         case DEFAULT_TAB_ORDER[1]:
@@ -23,6 +24,7 @@ const Chart = ({ type, data, onSelectNode, hoveredNode, metric }) => {
                     data={data}
                     onSelectNode={onSelectNode}
                     hoveredNode={hoveredNode}
+                    onNodeHover={onNodeHover}
                 />
             );
         case DEFAULT_TAB_ORDER[2]:
@@ -31,6 +33,7 @@ const Chart = ({ type, data, onSelectNode, hoveredNode, metric }) => {
                     data={data}
                     onSelectNode={onSelectNode}
                     hoveredNode={hoveredNode}
+                    onNodeHover={onNodeHover}
                 />
             );
         default:

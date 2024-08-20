@@ -1,3 +1,20 @@
+function findRoot(dataArray) {
+    // Create a set to store all child names
+    const childSet = new Set();
+
+    // Iterate through the dataArray and add all children to the set
+    dataArray.forEach((item) => {
+        item.children.forEach((child) => {
+            childSet.add(child);
+        });
+    });
+
+    // Find the element that is not in the set, i.e., the root
+    const root = dataArray.find((item) => !childSet.has(item.name)).name;
+
+    return root;
+}
+
 function adaptDataFormat(dataArray, inputDate, root) {
 
     if (!dataArray) {
@@ -26,8 +43,6 @@ function adaptDataFormat(dataArray, inputDate, root) {
         const foundNode = data.find(node => node.name === name);
         return foundNode || null;
     }
-
-    
 
     // Function to build the tree
     function buildTree(data) {
@@ -104,4 +119,4 @@ function updateTreeValues(tree, metric) {
 
 
 
-export { adaptDataFormat, updateTreeValues };
+export { adaptDataFormat, updateTreeValues, findRoot };
