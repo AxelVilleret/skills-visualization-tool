@@ -1,4 +1,5 @@
 # Skills visualization tool
+[![Netlify Status](https://api.netlify.com/api/v1/badges/50092e54-fa99-4760-9903-847fe1abbfde/deploy-status)](https://app.netlify.com/sites/skills-vizualisation-tool/deploys)
 
 This project was carried out during my final year of engineering studies. In a team of four, our objective was to develop a tool allowing a learner, on an online learning platform, to be able to visualize a set of skills represented by a hierarchy on a web interface. We also had interoperability constraints. Indeed, our tool must be able to be easily integrated into existing LMS such as the Moodle platform, which was achieved by implementing the LTI protocol, designed for this purpose.
 
@@ -24,4 +25,4 @@ To install and run this project, follow these steps:
 
 ## Usage 
 
-You can use the application via the following link: [Skills visualization tool](https://skills-vizualisation-tool.netlify.app/). [![Netlify Status](https://api.netlify.com/api/v1/badges/50092e54-fa99-4760-9903-847fe1abbfde/deploy-status)](https://app.netlify.com/sites/skills-vizualisation-tool/deploys)
+You can use the application via the following link: [Skills visualization tool](https://skills-vizualisation-tool.netlify.app/). 
