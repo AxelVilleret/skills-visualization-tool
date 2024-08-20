@@ -7,6 +7,21 @@ function isLeaf(node) {
     return node.children?.length === 0;
 }
 
+const findNode = (node, nodeName) => {
+    if (node.name === nodeName) {
+        return node;
+    }
+    if (node.children) {
+        for (let child of node.children) {
+            const found = findNode(child, nodeName);
+            if (found) {
+                return found;
+            }
+        }
+    }
+    return null;
+};
+
 function findClosestDate(updates, inputDate) {
     let date = new Date(inputDate);
     updates.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
@@ -90,4 +105,4 @@ function updateTreeValues(tree, metric) {
     return clonedTree;
 }
 
-export { adaptDataFormat, updateTreeValues, findRoot, deepClone, isLeaf, findClosestDate, findNodeByName };
+export { adaptDataFormat, updateTreeValues, findRoot, findNode, deepClone, isLeaf, findClosestDate, findNodeByName };

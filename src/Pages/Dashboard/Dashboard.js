@@ -2,7 +2,7 @@ import React, { useMemo, useState, useCallback } from "react";
 import { Container, Tabs, Tab, } from "react-bootstrap";
 import SkillTree from "../../Components/SkillsTree/SkillsTree.jsx";
 import MultiLines from "../../Components/MultiLines/MultiLines.jsx";
-import { adaptDataFormat, findRoot } from "../../Services/AdapterService.js";
+import { adaptDataFormat, findRoot } from "../../utils.js";
 import Legend from "../../Components/Legend/Legend.jsx";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";

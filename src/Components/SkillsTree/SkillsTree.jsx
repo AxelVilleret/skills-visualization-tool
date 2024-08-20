@@ -4,6 +4,7 @@ import { Treebeard } from "react-treebeard";
 import treeStyle from "./treeStyle";
 import "./style.css";
 import { ACTIVE_COLOR, INACTIVE_COLOR, HOVERED_COLOR } from "../../constants";
+import { findNode } from "../../utils.js";
 
 const Toggle = ({ node, style }) => {
 
@@ -84,21 +85,7 @@ const SkillTree = React.memo(({ data, selectedNode, onSelectNode, hoveredNode, o
 	const [previousNode, setPreviousNode] = useState(data);
 
 	const currentNode = useMemo(() => {
-		const findNode = (node) => {
-			if (node.name === selectedNode) {
-				return node;
-			}
-			if (node.children) {
-				for (let child of node.children) {
-					const found = findNode(child);
-					if (found) {
-						return found;
-					}
-				}
-			}
-			return null;
-		};
-		return findNode(treeData);
+		return findNode(treeData, selectedNode);
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [selectedNode]);
 

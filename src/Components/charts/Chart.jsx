@@ -3,7 +3,7 @@ import SunburstChart from "./Sunburst/Sunburst.jsx";
 import PartitionDiagram from "./Partition/Partition.jsx";
 import CirclePacking from "./CirclePacking/CirclePacking.jsx";
 import { DEFAULT_TAB_ORDER } from '../../constants.js';
-import { updateTreeValues } from '../../Services/AdapterService.js';
+import { updateTreeValues } from '../../utils.js';
 
 const Chart = ({ type, data, onSelectNode, hoveredNode, onNodeHover, metric }) => {
 
