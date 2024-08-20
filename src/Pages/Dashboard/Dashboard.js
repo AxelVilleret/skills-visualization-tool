@@ -13,7 +13,7 @@ import {
 	LibraryBooksOutlined,
 } from "@mui/icons-material";
 import CustomPopover from "../../Components/CustomPopover/CustomPopover.jsx";
-import { LOCAL_STORAGE_KEYS, DEFAULT_COLOR_PALETTE, DEFAULT_TAB_ORDER, METRICS } from "../../constants.js";
+import { LOCAL_STORAGE_KEYS, DEFAULT_TAB_ORDER, METRICS } from "../../constants.js";
 import { localStorageService } from "../../Services/LocalStorageService.js";
 import Chart from "../../Components/charts/Chart.jsx";
 

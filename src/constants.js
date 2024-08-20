@@ -17,14 +17,14 @@ export const DEFAULT_TAB_ORDER = ["Sunburst Chart", "Partition Diagram", "Circle
 export const METRICS = [
     {
         key: "mastery",
-        label: "Mastery",
+        label: "Maitrise",
     },
     {
         key: "trust",
-        label: "Trust",
+        label: "Confiance",
     },
     {
         key: "cover",
-        label: "Cover",
+        label: "Couverture",
     },
 ];

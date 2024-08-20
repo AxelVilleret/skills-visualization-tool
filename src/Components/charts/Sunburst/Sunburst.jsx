@@ -31,7 +31,7 @@ const SunburstChart = ({ data, onSelectNode, hoveredNode }) => {
         .sum(d => d.value * 100)
         .sort((a, b) => b.value - a.value));
 
-      const svg = d3.select(ref.current)
+      d3.select(ref.current)
         .selectAll("*")
         .remove();
 
@@ -68,8 +68,15 @@ const SunburstChart = ({ data, onSelectNode, hoveredNode }) => {
         onSelectNode(d.data.name);
       });
 
+      node.on("mouseover", function (event, d) {
+        d3.select(this).attr("stroke", "#000").attr("stroke-width", 2);
+      })
+      node.on("mouseout", function (event, d) {
+        d3.select(this).attr("stroke", null).attr("stroke-width", null);
+      });
+
       // Add text to each path
-      const text = svgContainer.append("g")
+      svgContainer.append("g")
         .selectAll("text")
         .data(root.descendants().filter(d => d.depth))
         .join("text")
@@ -82,11 +89,15 @@ const SunburstChart = ({ data, onSelectNode, hoveredNode }) => {
         .text(d => `${d.data.name} ${Math.round(d.data.value * 100)}`)
         .attr("fill", "#000")
         .attr("font-size", "10px")
-        .attr("text-anchor", d => d.x0 < Math.PI === !d.children ? "start" : "end");
+        .attr("text-anchor", d => {
+          const isLeftSide = d.x0 < Math.PI;
+          const hasChildren = d.children;
+          return isLeftSide === !hasChildren ? "start" : "end";
+        });
     };
 
     updateChart(data);
-  }, [data, colorScale, hoveredNode]);
+  }, [data, colorScale, hoveredNode, onSelectNode]);
 
   return <svg ref={ref} />;
 };

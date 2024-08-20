@@ -1,5 +1,5 @@
 import { ArrowDropDown } from "@mui/icons-material";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Treebeard } from "react-treebeard";
 import treeStyle from "./treeStyle";
 import "./style.css";
@@ -83,9 +83,13 @@ const decorators = {
 const SkillTree = React.memo(({ data, selectedNode, onSelectNode, onNodeHover }) => {
 	const [treeData, setTreeData] = useState({ ...data, toggled: true });
 	const [currentNode, setCurrentNode] = useState(treeData);
-	const [isMounted, setIsMounted] = useState(false);
 
-	const updateData = () => {
+	const onToggle = useCallback((node) => {
+		currentNode.active = false;
+		node.active = true;
+		node.toggled = true;
+		setCurrentNode(node);
+		onSelectNode(node.name);
 		const markNodeAsActive = (node, path = []) => {
 			if (node.name === selectedNode) {
 				path.forEach(parent => parent.toggled = true);
@@ -96,24 +100,11 @@ const SkillTree = React.memo(({ data, selectedNode, onSelectNode, onNodeHover })
 		};
 		markNodeAsActive(treeData);
 		setTreeData({ ...treeData });
-	};
+	}, [selectedNode, onSelectNode, treeData, currentNode]);
 
 	useEffect(() => {
-		if (isMounted) {
-			updateData();
-		} else {
-			setIsMounted(true);
-		}
-	}, [selectedNode]);
-
-	const onToggle = (node) => {
-		currentNode.active = false;
-		console.log(currentNode);
-		node.active = true;
-		node.toggled = true;
-		setCurrentNode(node);
-		onSelectNode(node.name);
-	};
+		onToggle(currentNode);
+	}, []);
 
 	return (
 		<div className="w-fit-content">

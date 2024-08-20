@@ -25,7 +25,7 @@ const CirclePacking = ({ data, onSelectNode, hoveredNode }) => {
                 .sum(d => d.value * 100)
                 .sort((a, b) => b.value - a.value));
 
-            const svg = d3.select(ref.current)
+            d3.select(ref.current)
                 .selectAll("*")
                 .remove();
 
@@ -88,7 +88,7 @@ const CirclePacking = ({ data, onSelectNode, hoveredNode }) => {
             updateChart(d.data);
             onSelectNode(d.data.name);
         });
-    }, [data, colorScale]);
+    }, [data, colorScale, hoveredNode, onSelectNode]);
 
     return <svg ref={ref} />;
 };

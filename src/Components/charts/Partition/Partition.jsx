@@ -8,11 +8,12 @@ const PartitionDiagram = ({ data, onSelectNode, hoveredNode }) => {
   const colorScale = localStorageService.getItem(LOCAL_STORAGE_KEYS.COLOR_PALETTE) || DEFAULT_COLOR_PALETTE
 
   const ref = useRef();
-  const width = 928;
-  const height = width;
-  const format = d3.format(",d");
 
   useEffect(() => {
+
+    const width = 928;
+    const height = width;
+    const format = d3.format(",d");
 
     const partitionLayout = d3.partition()
       .size([width, height])
@@ -24,7 +25,7 @@ const PartitionDiagram = ({ data, onSelectNode, hoveredNode }) => {
         .sum(d => d.value * 100)
         .sort((a, b) => b.value - a.value));
 
-      const svg = d3.select(ref.current)
+      d3.select(ref.current)
         .selectAll("*")
         .remove();
 
@@ -64,7 +65,7 @@ const PartitionDiagram = ({ data, onSelectNode, hoveredNode }) => {
       });
 
       // Add text to each rectangle
-      const text = svgContainer.append("g")
+      svgContainer.append("g")
         .selectAll("text")
         .data(root.descendants())
         .join("text")
@@ -86,7 +87,7 @@ const PartitionDiagram = ({ data, onSelectNode, hoveredNode }) => {
     };
 
     updateChart(data);
-  }, [data, colorScale]);
+  }, [data, colorScale, hoveredNode, onSelectNode]);
 
   return <svg ref={ref} />;
 };

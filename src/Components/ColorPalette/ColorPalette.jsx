@@ -12,7 +12,7 @@ function ColorPalette({ colors, selectedPalette, handleSelect, children }) {
 
     useEffect(() => {
         setIsSelected(JSON.stringify(colors) === JSON.stringify(selectedPalette))
-    }, [selectedPalette])
+    }, [selectedPalette, colors])
 
 	return (
 		<div className="position-relative d-inline-block m-3" >
