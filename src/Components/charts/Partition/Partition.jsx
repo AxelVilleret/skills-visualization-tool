@@ -1,7 +1,12 @@
 import React, { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
+import { LOCAL_STORAGE_KEYS, DEFAULT_COLOR_PALETTE } from '../../../constants.js';
+import { localStorageService } from '../../../Services/LocalStorageService.js';
 
-const PartitionDiagram = ({ data, colorScale, setSelectedNode, hoveredNode }) => {
+const PartitionDiagram = ({ data, onSelectNode, hoveredNode }) => {
+
+  const colorScale = localStorageService.getItem(LOCAL_STORAGE_KEYS.COLOR_PALETTE) || DEFAULT_COLOR_PALETTE
+
   const ref = useRef();
   const width = 928;
   const height = width;
@@ -55,7 +60,7 @@ const PartitionDiagram = ({ data, colorScale, setSelectedNode, hoveredNode }) =>
 
       node.on("click", (event, d) => {
         updateChart(d.data);
-        setSelectedNode(d.data.name);
+        onSelectNode(d.data.name);
       });
 
       // Add text to each rectangle

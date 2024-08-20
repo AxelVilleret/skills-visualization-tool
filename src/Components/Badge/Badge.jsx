@@ -1,14 +1,12 @@
-import React from 'react'
+import React from 'react';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
-function Badge({children}) {
-const style = {
-    width: "25px",
-    height: "25px",
-}
-
+function Badge({ children }) {
   return (
-    <div className='position-absolute' style={{ top: -8, right: -8, borderRadius: "500px", backgroundColor: "#1e3a8a", ...style }}>{children}</div>
-  )
+    <div className="position-absolute top-0 end-0 translate-middle p-2 bg-primary rounded-circle">
+      {children}
+    </div>
+  );
 }
 
-export default Badge
+export default Badge;

@@ -1,7 +1,12 @@
 import React, { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
+import { LOCAL_STORAGE_KEYS, DEFAULT_COLOR_PALETTE } from '../../../constants.js';
+import { localStorageService } from '../../../Services/LocalStorageService.js';
 
-const CirclePacking = ({ data, colorScale, setSelectedNode, hoveredNode }) => {
+const CirclePacking = ({ data, onSelectNode, hoveredNode }) => {
+
+    const colorScale = localStorageService.getItem(LOCAL_STORAGE_KEYS.COLOR_PALETTE) || DEFAULT_COLOR_PALETTE
+
     const ref = useRef();
 
     useEffect(() => {
@@ -81,7 +86,7 @@ const CirclePacking = ({ data, colorScale, setSelectedNode, hoveredNode }) => {
 
         svgContainer.selectAll("circle").on("click", (event, d) => {
             updateChart(d.data);
-            setSelectedNode(d.data.name);
+            onSelectNode(d.data.name);
         });
     }, [data, colorScale]);
 

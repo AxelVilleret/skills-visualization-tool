@@ -80,7 +80,7 @@ const decorators = {
 	},
 };
 
-const SkillTree = React.memo(({ data, selectedNode, setSelectedNode, setHoveredNode }) => {
+const SkillTree = React.memo(({ data, selectedNode, onSelectNode, onNodeHover }) => {
 	const [treeData, setTreeData] = useState({ ...data, toggled: true });
 	const [currentNode, setCurrentNode] = useState(treeData);
 	const [isMounted, setIsMounted] = useState(false);
@@ -112,7 +112,7 @@ const SkillTree = React.memo(({ data, selectedNode, setSelectedNode, setHoveredN
 		node.active = true;
 		node.toggled = true;
 		setCurrentNode(node);
-		setSelectedNode(node.name);
+		onSelectNode(node.name);
 	};
 
 	return (
@@ -128,7 +128,7 @@ const SkillTree = React.memo(({ data, selectedNode, setSelectedNode, setHoveredN
 				style={treeStyle}
 				data={treeData}
 				onToggle={onToggle}
-				decorators={{ ...decorators, Container: (props) => <decorators.Container {...props} onNodeHover={setHoveredNode} /> }}
+				decorators={{ ...decorators, Container: (props) => <decorators.Container {...props} onNodeHover={onNodeHover} /> }}
 			/>
 		</div>
 	);

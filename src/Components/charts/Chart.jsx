@@ -5,7 +5,7 @@ import CirclePacking from "./CirclePacking/CirclePacking.jsx";
 import { DEFAULT_TAB_ORDER } from '../../constants.js';
 import { updateTreeValues } from '../../Services/AdapterService.js';
 
-const Chart = ({ type, data, colorScale, setSelectedNode, hoveredNode, metric }) => {
+const Chart = ({ type, data, onSelectNode, hoveredNode, metric }) => {
 
     data = updateTreeValues(data, metric);
     switch (type) {
@@ -13,8 +13,7 @@ const Chart = ({ type, data, colorScale, setSelectedNode, hoveredNode, metric })
             return (
                 <SunburstChart
                     data={data}
-                    colorScale={colorScale}
-                    setSelectedNode={setSelectedNode}
+                    onSelectNode={onSelectNode}
                     hoveredNode={hoveredNode}
                 />
             );
@@ -22,8 +21,7 @@ const Chart = ({ type, data, colorScale, setSelectedNode, hoveredNode, metric })
             return (
                 <PartitionDiagram
                     data={data}
-                    colorScale={colorScale}
-                    setSelectedNode={setSelectedNode}
+                    onSelectNode={onSelectNode}
                     hoveredNode={hoveredNode}
                 />
             );
@@ -31,8 +29,7 @@ const Chart = ({ type, data, colorScale, setSelectedNode, hoveredNode, metric })
             return (
                 <CirclePacking
                     data={data}
-                    colorScale={colorScale}
-                    setSelectedNode={setSelectedNode}
+                    onSelectNode={onSelectNode}
                     hoveredNode={hoveredNode}
                 />
             );

@@ -56,7 +56,7 @@ export default function Dashboard({ data }) {
 				<div className="shadow-sm border p-4 w-50">
 					<h2>Hiérarchie</h2>
 					<p>Vous pouvez sélectionner une compétence dans la hiérarchie ci-dessous.</p>
-					<SkillTree data={formattedData} selectedNode={selectedNode} setSelectedNode={setSelectedNode} setHoveredNode={setHoveredNode} />
+					<SkillTree data={formattedData} selectedNode={selectedNode} onSelectNode={setSelectedNode} onNodeHover={setHoveredNode} />
 				</div>
 
 				<div className="shadow-sm border p-4 w-50">
@@ -86,17 +86,13 @@ export default function Dashboard({ data }) {
 					<Tabs activeKey={activeTab} onSelect={handleTabChange}>
 						{CHART_TYPES.map((chart) => (
 							<Tab eventKey={chart} title={chart} key={chart}>
-								<Chart type={chart} data={formattedData} colorScale={localStorageService.getItem(LOCAL_STORAGE_KEYS.COLOR_PALETTE) || DEFAULT_COLOR_PALETTE} setSelectedNode={setSelectedNode} hoveredNode={hoveredNode} metric={metric} />
+								<Chart type={chart} data={formattedData} onSelectNode={setSelectedNode} hoveredNode={hoveredNode} metric={metric} />
 							</Tab>
 						))}
 					</Tabs>
 					<div className="d-flex justify-content-end">
 						<CustomPopover>
 							<Legend
-								colorScale={
-									JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEYS.COLOR_PALETTE)) ||
-									DEFAULT_COLOR_PALETTE
-								}
 								titles={LEGEND}
 							/>
 						</CustomPopover>

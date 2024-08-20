@@ -1,6 +1,10 @@
 import React from "react";
+import { LOCAL_STORAGE_KEYS, DEFAULT_COLOR_PALETTE } from '../../constants.js';
+import { localStorageService } from '../../Services/LocalStorageService.js';
 
-const Legend = ({ colorScale, titles }) => {
+const Legend = ({ titles }) => {
+
+	const colorScale = localStorageService.getItem(LOCAL_STORAGE_KEYS.COLOR_PALETTE) || DEFAULT_COLOR_PALETTE
 	return (
 		<div
 			style={{
